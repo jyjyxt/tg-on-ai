@@ -17,10 +17,16 @@ func TestPerpetual(t *testing.T) {
 	require.Nil(err)
 	defer os.Remove(path)
 
-	p, err := store.CreatePerpetual(ctx, "bitcoin")
+	p, err := store.CreatePerpetual(ctx, "ETHBTC", "ETH", "BTC", "binance", []string{"pos"})
 	require.Nil(err)
 	require.NotNil(p)
-	p, err = store.ReadPerpetual(ctx, "bitcoin")
+	p, err = store.ReadPerpetual(ctx, "ETHBTC")
 	require.Nil(err)
 	require.NotNil(p)
+	ps, err := store.ReadPerpetuals(ctx, PerpetualSourceBinance)
+	require.Nil(err)
+	require.Len(ps, 1)
+	filter, err := store.ReadPerpetualSet(ctx, PerpetualSourceBinance)
+	require.Nil(err)
+	require.Len(filter, 1)
 }

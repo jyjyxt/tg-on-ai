@@ -3,5 +3,6 @@ CREATE TABLE IF NOT EXISTS perpetuals (
   base_asset             TEXT NOT NULL,
   quote_asset            TEXT NOT NULL,
   categories             TEXT NOT NULL,
+  source                 TEXT NOT NULL,
   PRIMARY KEY(symbol)
 );
