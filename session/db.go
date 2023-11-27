@@ -1,4 +1,4 @@
-package models
+package session
 
 import (
 	"context"
@@ -42,22 +42,24 @@ func OpenSQLite3Store(path, schema string) (*SQLite3Store, error) {
 	}, nil
 }
 
-func (s *SQLite3Store) Query(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer tx.Rollback()
-	return tx.QueryContext(ctx, query, args...)
+func (s *SQLite3Store) Lock() {
+	s.mutex.Lock()
 }
 
-func (s *SQLite3Store) QueryRow(ctx context.Context, query string, args ...any) (*sql.Row, error) {
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer tx.Rollback()
-	return tx.QueryRowContext(ctx, query, args...), nil
+func (s *SQLite3Store) Unlock() {
+	s.mutex.Unlock()
+}
+
+func (s *SQLite3Store) BeginTx(ctx context.Context) (*sql.Tx, error) {
+	return s.db.BeginTx(ctx, nil)
+}
+
+func (s *SQLite3Store) Query(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
+	return s.db.QueryContext(ctx, query, args...)
+}
+
+func (s *SQLite3Store) QueryRow(ctx context.Context, query string, args ...any) *sql.Row {
+	return s.db.QueryRowContext(ctx, query, args...)
 }
 
 func (s *SQLite3Store) execOne(ctx context.Context, tx *sql.Tx, sql string, params ...any) error {

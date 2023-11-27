@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"tg-on-ai/session"
 )
 
 const (
@@ -25,7 +26,7 @@ func (p *Perpetual) values() []any {
 	return []any{p.Symbol, p.BaseAsset, p.QuoteAsset, p.Categories, p.Source}
 }
 
-func perpetualFromRow(row Row) (*Perpetual, error) {
+func perpetualFromRow(row session.Row) (*Perpetual, error) {
 	var p Perpetual
 	err := row.Scan(&p.Symbol, &p.BaseAsset, &p.QuoteAsset, &p.Categories, &p.Source)
 	if err == sql.ErrNoRows {
@@ -34,11 +35,12 @@ func perpetualFromRow(row Row) (*Perpetual, error) {
 	return &p, err
 }
 
-func (s *SQLite3Store) CreatePerpetual(ctx context.Context, symbol, base, quote, source string, categories []string) (*Perpetual, error) {
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
+func CreatePerpetual(ctx context.Context, symbol, base, quote, source string, categories []string) (*Perpetual, error) {
+	s := session.SqliteDB(ctx)
+	s.Lock()
+	defer s.Unlock()
 
-	txn, err := s.db.BeginTx(ctx, nil)
+	txn, err := s.BeginTx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +53,7 @@ func (s *SQLite3Store) CreatePerpetual(ctx context.Context, symbol, base, quote,
 		Categories: strings.ToLower(strings.Join(categories, ",")),
 		Source:     source,
 	}
-	query := BuildInsertionSQL("perpetuals", perpetualCols)
+	query := session.BuildInsertionSQL("perpetuals", perpetualCols)
 	_, err = txn.ExecContext(ctx, query, p.values()...)
 	if err != nil {
 		return nil, err
@@ -59,14 +61,14 @@ func (s *SQLite3Store) CreatePerpetual(ctx context.Context, symbol, base, quote,
 	return p, txn.Commit()
 }
 
-func (s *SQLite3Store) ReadPerpetual(ctx context.Context, symbol string) (*Perpetual, error) {
+func ReadPerpetual(ctx context.Context, symbol string) (*Perpetual, error) {
 	query := fmt.Sprintf("SELECT %s FROM perpetuals WHERE symbol=?", strings.Join(perpetualCols, ","))
-	row := s.db.QueryRowContext(ctx, query, symbol)
+	row := session.SqliteDB(ctx).QueryRow(ctx, query, symbol)
 	return perpetualFromRow(row)
 }
 
-func (s *SQLite3Store) ReadPerpetualSet(ctx context.Context, source string) (map[string]*Perpetual, error) {
-	ps, err := s.ReadPerpetuals(ctx, source)
+func ReadPerpetualSet(ctx context.Context, source string) (map[string]*Perpetual, error) {
+	ps, err := ReadPerpetuals(ctx, source)
 	if err != nil {
 		return nil, err
 	}
@@ -77,9 +79,10 @@ func (s *SQLite3Store) ReadPerpetualSet(ctx context.Context, source string) (map
 	return filter, nil
 }
 
-func (s *SQLite3Store) ReadPerpetuals(ctx context.Context, source string) ([]*Perpetual, error) {
+func ReadPerpetuals(ctx context.Context, source string) ([]*Perpetual, error) {
+	s := session.SqliteDB(ctx)
 	query := fmt.Sprintf("SELECT %s FROM perpetuals", strings.Join(perpetualCols, ","))
-	rows, err := s.db.QueryContext(ctx, query)
+	rows, err := s.Query(ctx, query)
 	if err != nil {
 		return nil, err
 	}

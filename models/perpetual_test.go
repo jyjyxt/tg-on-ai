@@ -4,29 +4,31 @@ import (
 	"context"
 	"os"
 	"testing"
+	"tg-on-ai/session"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestPerpetual(t *testing.T) {
 	require := require.New(t)
-	ctx := context.Background()
-
 	path := "/tmp/test.sqlite3"
-	store, err := OpenDataSQLite3Store(path)
+	store, err := session.OpenDataSQLite3Store(path)
 	require.Nil(err)
+	ctx := context.Background()
+	ctx = session.WithSqliteDB(ctx, store)
+
 	defer os.Remove(path)
 
-	p, err := store.CreatePerpetual(ctx, "ETHBTC", "ETH", "BTC", "binance", []string{"pos"})
+	p, err := CreatePerpetual(ctx, "ETHBTC", "ETH", "BTC", PerpetualSourceBinance, []string{"pos"})
 	require.Nil(err)
 	require.NotNil(p)
-	p, err = store.ReadPerpetual(ctx, "ETHBTC")
+	p, err = ReadPerpetual(ctx, "ETHBTC")
 	require.Nil(err)
 	require.NotNil(p)
-	ps, err := store.ReadPerpetuals(ctx, PerpetualSourceBinance)
+	ps, err := ReadPerpetuals(ctx, PerpetualSourceBinance)
 	require.Nil(err)
 	require.Len(ps, 1)
-	filter, err := store.ReadPerpetualSet(ctx, PerpetualSourceBinance)
+	filter, err := ReadPerpetualSet(ctx, PerpetualSourceBinance)
 	require.Nil(err)
 	require.Len(filter, 1)
 }
