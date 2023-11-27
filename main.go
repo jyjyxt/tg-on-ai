@@ -2,11 +2,14 @@ package main
 
 import (
 	"log"
+	"tg-on-ai/services"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func main() {
+	services.LoopingExchangeInfo(path)
+	return
 	// token := "6337999999:AAFimM8x_invalidetokenforexample"
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
