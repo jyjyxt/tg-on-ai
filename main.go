@@ -24,4 +24,17 @@ func main() {
 	if _, err := bot.Send(msg); err != nil {
 		log.Panic(err)
 	}
+
+	u := tgbotapi.NewUpdate(0)
+	u.Timeout = 60
+
+	updates := bot.GetUpdatesChan(u)
+	for update := range updates {
+		if imsg := update.ChannelPost; imsg != nil { // If we got a message
+			msg := tgbotapi.NewMessage(imsg.Chat.ID, imsg.Text+" 🤟")
+			msg.ReplyToMessageID = imsg.MessageID
+
+			bot.Send(msg)
+		}
+	}
 }
