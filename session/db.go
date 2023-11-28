@@ -42,6 +42,10 @@ func OpenSQLite3Store(path, schema string) (*SQLite3Store, error) {
 	}, nil
 }
 
+func (s *SQLite3Store) Close() error {
+	return s.db.Close()
+}
+
 func (s *SQLite3Store) Lock() {
 	s.mutex.Lock()
 }

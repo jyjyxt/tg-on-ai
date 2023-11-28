@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"strings"
 	"tg-on-ai/session"
+
+	"golang.org/x/exp/maps"
 )
 
 const (
@@ -18,6 +20,11 @@ type Perpetual struct {
 	QuoteAsset string
 	Categories string
 	Source     string
+
+	// https://fapi.binance.com/fapi/v1/fundingInfo
+	// FundingRateCap       string
+	// FundingRateFloor     string
+	// fundingIntervalHours int64
 }
 
 var perpetualCols = []string{"symbol", "base_asset", "quote_asset", "categories", "source"}
@@ -67,6 +74,27 @@ func ReadPerpetual(ctx context.Context, symbol string) (*Perpetual, error) {
 	return perpetualFromRow(row)
 }
 
+func ReadPerpetualCategory(ctx context.Context) ([]string, error) {
+	ps, err := ReadPerpetuals(ctx, "")
+	if err != nil {
+		return nil, err
+	}
+	filter := make(map[string]string, 0)
+	for _, p := range ps {
+		cs := strings.Split(p.Categories, ",")
+		for _, c := range cs {
+			if filter[c] != "" {
+				continue
+			}
+			if c == "" {
+				continue
+			}
+			filter[c] = c
+		}
+	}
+	return maps.Keys(filter), nil
+}
+
 func ReadPerpetualSet(ctx context.Context, source string) (map[string]*Perpetual, error) {
 	ps, err := ReadPerpetuals(ctx, source)
 	if err != nil {
@@ -92,7 +120,7 @@ func ReadPerpetuals(ctx context.Context, source string) ([]*Perpetual, error) {
 		if err != nil {
 			return nil, err
 		}
-		if p.Source != source {
+		if source != "" && p.Source != source {
 			continue
 		}
 		ps = append(ps, p)

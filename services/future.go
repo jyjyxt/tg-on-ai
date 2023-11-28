@@ -4,23 +4,15 @@ import (
 	"context"
 	"log"
 	"tg-on-ai/models"
-	"tg-on-ai/session"
 	"time"
 
 	"github.com/adshao/go-binance/v2/futures"
 )
 
-func LoopingExchangeInfo(path string) {
+func LoopingExchangeInfo(ctx context.Context) {
 	log.Println("LoopingExchangeInfo starting")
-	store, err := session.OpenDataSQLite3Store(path)
-	if err != nil {
-		panic(err)
-	}
-	ctx := context.Background()
-	ctx = session.WithSqliteDB(ctx, store)
-
 	for {
-		err = fetchExchangeInfo(ctx)
+		err := fetchExchangeInfo(ctx)
 		if err != nil {
 			log.Printf("fetchExchangeInfo() => %#v", err)
 			time.Sleep(time.Second)

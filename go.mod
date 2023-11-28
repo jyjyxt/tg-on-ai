@@ -17,5 +17,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
+	golang.org/x/exp v0.0.0-20231127185646-65229373498e // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
