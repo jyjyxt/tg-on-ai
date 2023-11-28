@@ -167,7 +167,7 @@ func ReadPerpetuals(ctx context.Context, source string) ([]*Perpetual, error) {
 
 func findPerpetuals(ctx context.Context, query string, args ...any) ([]*Perpetual, error) {
 	s := session.SqliteDB(ctx)
-	rows, err := s.Query(ctx, query)
+	rows, err := s.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
