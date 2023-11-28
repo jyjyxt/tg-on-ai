@@ -20,6 +20,7 @@ func main() {
 	ctx = session.WithSqliteDB(ctx, store)
 
 	go services.LoopingExchangeInfo(ctx)
+	go services.LoopingPremiumIndex(ctx)
 	// token := "6337999999:AAFimM8x_invalidetokenforexample"
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {

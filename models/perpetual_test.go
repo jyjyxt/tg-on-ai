@@ -35,6 +35,9 @@ func TestPerpetual(t *testing.T) {
 	p, err = UpdatePerpetual(ctx, "ETHBTC", "0.06977089", "-0.00025906")
 	require.Nil(err)
 	require.NotNil(p)
+	p, err = ReadPerpetual(ctx, "ETHBTC")
+	require.Nil(err)
+	require.NotNil(p)
 	require.Equal(0.06977089, p.MarkPrice)
 	require.Equal(-0.00025906, p.LastFundingRate)
 }

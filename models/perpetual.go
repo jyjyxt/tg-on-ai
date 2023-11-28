@@ -97,7 +97,7 @@ func UpdatePerpetual(ctx context.Context, symbol, markPrice, fundingRate string)
 	if err != nil {
 		return nil, err
 	}
-	return p, err
+	return p, txn.Commit()
 }
 
 func ReadPerpetual(ctx context.Context, symbol string) (*Perpetual, error) {

@@ -48,3 +48,40 @@ func fetchExchangeInfo(ctx context.Context) error {
 	}
 	return nil
 }
+
+func LoopingPremiumIndex(ctx context.Context) {
+	log.Println("LoopingPremiumIndex starting")
+	for {
+		err := fetchPremiumIndex(ctx)
+		if err != nil {
+			log.Printf("fetchPremiumIndex() => %#v", err)
+			time.Sleep(time.Second)
+			continue
+		}
+		log.Println("LoopingPremiumIndex executed at", time.Now())
+		time.Sleep(time.Minute)
+	}
+}
+
+func fetchPremiumIndex(ctx context.Context) error {
+	client := futures.NewClient("", "")
+	info, err := client.NewPremiumIndexService().Do(ctx)
+	if err != nil {
+		return err
+	}
+
+	filter, err := models.ReadPerpetualSet(ctx, models.PerpetualSourceBinance)
+	if err != nil {
+		return err
+	}
+	for _, in := range info {
+		if filter[in.Symbol] == nil {
+			continue
+		}
+		_, err = models.UpdatePerpetual(ctx, in.Symbol, in.MarkPrice, in.LastFundingRate)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
