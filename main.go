@@ -30,6 +30,7 @@ func main() {
 
 	// 打印 bot 的用户名
 	log.Printf("Authorized on account %s", bot.Self.UserName)
+	go services.LoopingTGNotify(ctx, bot)
 
 	/*
 		// 定义要发送到 channel 的消息

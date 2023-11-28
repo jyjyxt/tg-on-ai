@@ -127,6 +127,22 @@ func ReadPerpetualCategory(ctx context.Context) ([]string, error) {
 	return maps.Keys(filter), nil
 }
 
+func ReadDiscretePerpetuals(ctx context.Context) ([]*Perpetual, error) {
+	lower := fmt.Sprintf("SELECT %s FROM perpetuals ORDER BY last_funding_rate DESC LIMIT 3", strings.Join(perpetualCols, ","))
+	ps, err := findPerpetuals(ctx, lower)
+	if err != nil {
+		return nil, err
+	}
+
+	higher := fmt.Sprintf("SELECT %s FROM perpetuals ORDER BY last_funding_rate LIMIT 3", strings.Join(perpetualCols, ","))
+	pss, err := findPerpetuals(ctx, higher)
+	if err != nil {
+		return nil, err
+	}
+	ps = append(ps, pss...)
+	return ps, nil
+}
+
 func ReadPerpetualSet(ctx context.Context, source string) (map[string]*Perpetual, error) {
 	ps, err := ReadPerpetuals(ctx, source)
 	if err != nil {
@@ -140,8 +156,12 @@ func ReadPerpetualSet(ctx context.Context, source string) (map[string]*Perpetual
 }
 
 func ReadPerpetuals(ctx context.Context, source string) ([]*Perpetual, error) {
-	s := session.SqliteDB(ctx)
 	query := fmt.Sprintf("SELECT %s FROM perpetuals", strings.Join(perpetualCols, ","))
+	return findPerpetuals(ctx, query)
+}
+
+func findPerpetuals(ctx context.Context, query string) ([]*Perpetual, error) {
+	s := session.SqliteDB(ctx)
 	rows, err := s.Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -151,9 +171,6 @@ func ReadPerpetuals(ctx context.Context, source string) ([]*Perpetual, error) {
 		p, err := perpetualFromRow(rows)
 		if err != nil {
 			return nil, err
-		}
-		if source != "" && p.Source != source {
-			continue
 		}
 		ps = append(ps, p)
 	}
