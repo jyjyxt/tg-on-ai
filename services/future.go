@@ -26,6 +26,7 @@ func LoopingExchangeInfo(path string) {
 			time.Sleep(time.Second)
 			continue
 		}
+		log.Println("LoopingExchangeInfo executed at", time.Now())
 		time.Sleep(time.Second * 30)
 	}
 }
