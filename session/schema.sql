@@ -8,3 +8,5 @@ CREATE TABLE IF NOT EXISTS perpetuals (
   last_funding_rate      REAL NOT NULL,
   PRIMARY KEY(symbol)
 );
+
+CREATE INDEX IF NOT EXISTS perpetuals_funding_rate ON perpetuals(last_funding_rate);
