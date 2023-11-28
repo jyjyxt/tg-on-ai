@@ -66,7 +66,7 @@ func (s *SQLite3Store) QueryRow(ctx context.Context, query string, args ...any) 
 	return s.db.QueryRowContext(ctx, query, args...)
 }
 
-func (s *SQLite3Store) execOne(ctx context.Context, tx *sql.Tx, sql string, params ...any) error {
+func (s *SQLite3Store) ExecOne(ctx context.Context, tx *sql.Tx, sql string, params ...any) error {
 	res, err := tx.ExecContext(ctx, sql, params...)
 	if err != nil {
 		return err

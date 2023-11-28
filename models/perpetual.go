@@ -7,6 +7,7 @@ import (
 	"strings"
 	"tg-on-ai/session"
 
+	"github.com/shopspring/decimal"
 	"golang.org/x/exp/maps"
 )
 
@@ -21,21 +22,25 @@ type Perpetual struct {
 	Categories string
 	Source     string
 
+	// https://fapi.binance.com/fapi/v1/premiumIndex
+	MarkPrice       float64
+	LastFundingRate float64
+
 	// https://fapi.binance.com/fapi/v1/fundingInfo
 	// FundingRateCap       string
 	// FundingRateFloor     string
 	// fundingIntervalHours int64
 }
 
-var perpetualCols = []string{"symbol", "base_asset", "quote_asset", "categories", "source"}
+var perpetualCols = []string{"symbol", "base_asset", "quote_asset", "categories", "source", "mark_price", "last_funding_rate"}
 
 func (p *Perpetual) values() []any {
-	return []any{p.Symbol, p.BaseAsset, p.QuoteAsset, p.Categories, p.Source}
+	return []any{p.Symbol, p.BaseAsset, p.QuoteAsset, p.Categories, p.Source, p.MarkPrice, p.LastFundingRate}
 }
 
 func perpetualFromRow(row session.Row) (*Perpetual, error) {
 	var p Perpetual
-	err := row.Scan(&p.Symbol, &p.BaseAsset, &p.QuoteAsset, &p.Categories, &p.Source)
+	err := row.Scan(&p.Symbol, &p.BaseAsset, &p.QuoteAsset, &p.Categories, &p.Source, &p.MarkPrice, &p.LastFundingRate)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -66,6 +71,33 @@ func CreatePerpetual(ctx context.Context, symbol, base, quote, source string, ca
 		return nil, err
 	}
 	return p, txn.Commit()
+}
+
+func UpdatePerpetual(ctx context.Context, symbol, markPrice, fundingRate string) (*Perpetual, error) {
+	p, err := ReadPerpetual(ctx, symbol)
+	if err != nil {
+		return nil, err
+	} else if p == nil {
+		return nil, nil
+	}
+
+	s := session.SqliteDB(ctx)
+	s.Lock()
+	defer s.Unlock()
+
+	txn, err := s.BeginTx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer txn.Rollback()
+
+	p.MarkPrice = decimal.RequireFromString(markPrice).InexactFloat64()
+	p.LastFundingRate = decimal.RequireFromString(fundingRate).InexactFloat64()
+	err = s.ExecOne(ctx, txn, "UPDATE perpetuals SET mark_price=?, last_funding_rate=? WHERE symbol=?", p.MarkPrice, p.LastFundingRate, p.Symbol)
+	if err != nil {
+		return nil, err
+	}
+	return p, err
 }
 
 func ReadPerpetual(ctx context.Context, symbol string) (*Perpetual, error) {

@@ -31,4 +31,10 @@ func TestPerpetual(t *testing.T) {
 	filter, err := ReadPerpetualSet(ctx, PerpetualSourceBinance)
 	require.Nil(err)
 	require.Len(filter, 1)
+
+	p, err = UpdatePerpetual(ctx, "ETHBTC", "0.06977089", "-0.00025906")
+	require.Nil(err)
+	require.NotNil(p)
+	require.Equal(0.06977089, p.MarkPrice)
+	require.Equal(-0.00025906, p.LastFundingRate)
 }
