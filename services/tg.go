@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"tg-on-ai/configs"
 	"tg-on-ai/models"
 	"time"
 
@@ -26,7 +27,7 @@ func LoopingTGNotify(ctx context.Context, bot *tgbotapi.BotAPI) {
 			texts = append(texts, fmt.Sprintf("%s, %s, Price %f, Rate %f", p.Symbol, p.Categories, p.MarkPrice, p.LastFundingRate))
 		}
 		if len(texts) > 0 {
-			msg := tgbotapi.NewMessage(-1001933177309, strings.Join(texts, "\n"))
+			msg := tgbotapi.NewMessage(configs.ChannelID, strings.Join(texts, "\n"))
 			if _, err := bot.Send(msg); err != nil {
 				time.Sleep(time.Second)
 				continue

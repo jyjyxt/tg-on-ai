@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"strings"
+	"tg-on-ai/configs"
 	"tg-on-ai/models"
 	"tg-on-ai/services"
 	"tg-on-ai/session"
@@ -12,7 +13,7 @@ import (
 )
 
 func main() {
-	store, err := session.OpenDataSQLite3Store(path)
+	store, err := session.OpenDataSQLite3Store(configs.Path)
 	if err != nil {
 		panic(err)
 	}
@@ -22,7 +23,7 @@ func main() {
 	go services.LoopingExchangeInfo(ctx)
 	go services.LoopingPremiumIndex(ctx)
 	// token := "6337999999:AAFimM8x_invalidetokenforexample"
-	bot, err := tgbotapi.NewBotAPI(token)
+	bot, err := tgbotapi.NewBotAPI(configs.Token)
 	if err != nil {
 		log.Panic(err)
 	}
