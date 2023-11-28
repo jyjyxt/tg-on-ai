@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strings"
 	"tg-on-ai/configs"
@@ -50,7 +51,8 @@ func main() {
 	for update := range updates {
 		if imsg := update.ChannelPost; imsg != nil { // If we got a message
 			var text string
-			switch strings.ToLower(strings.TrimSpace(imsg.Text)) {
+			cmd := strings.ToLower(strings.TrimSpace(imsg.Text))
+			switch cmd {
 			case "help":
 				cs, err := models.ReadPerpetualCategory(ctx)
 				if err != nil {
@@ -58,7 +60,18 @@ func main() {
 				}
 				text = strings.Join(cs, ", ")
 			default:
+				ps, err := models.ReadPerpetualsByCategory(ctx, cmd)
+				if err != nil {
+					return
+				}
 				text = imsg.Text + " 🤟"
+				if len(ps) != 0 {
+					var tt []string
+					for _, p := range ps {
+						tt = append(tt, fmt.Sprintf("%s, %s, Price %f, Rate %f", p.Symbol, p.Categories, p.MarkPrice, p.LastFundingRate))
+					}
+					text = strings.Join(tt, "\n")
+				}
 			}
 			if text == "" {
 				continue

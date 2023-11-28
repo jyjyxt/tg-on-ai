@@ -127,6 +127,11 @@ func ReadPerpetualCategory(ctx context.Context) ([]string, error) {
 	return maps.Keys(filter), nil
 }
 
+func ReadPerpetualsByCategory(ctx context.Context, category string) ([]*Perpetual, error) {
+	query := fmt.Sprintf("SELECT %s FROM perpetuals WHERE categories LIKE ? ORDER BY last_funding_rate LIMIT 5", strings.Join(perpetualCols, ","))
+	return findPerpetuals(ctx, query, "%"+category+"%")
+}
+
 func ReadDiscretePerpetuals(ctx context.Context) ([]*Perpetual, error) {
 	lower := fmt.Sprintf("SELECT %s FROM perpetuals ORDER BY last_funding_rate DESC LIMIT 3", strings.Join(perpetualCols, ","))
 	ps, err := findPerpetuals(ctx, lower)
@@ -160,7 +165,7 @@ func ReadPerpetuals(ctx context.Context, source string) ([]*Perpetual, error) {
 	return findPerpetuals(ctx, query)
 }
 
-func findPerpetuals(ctx context.Context, query string) ([]*Perpetual, error) {
+func findPerpetuals(ctx context.Context, query string, args ...any) ([]*Perpetual, error) {
 	s := session.SqliteDB(ctx)
 	rows, err := s.Query(ctx, query)
 	if err != nil {
