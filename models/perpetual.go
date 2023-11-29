@@ -51,6 +51,10 @@ func perpetualFromRow(row session.Row) (*Perpetual, error) {
 	return &p, err
 }
 
+func (p *Perpetual) GetSumOpenInterestValue() string {
+	return decimal.NewFromFloat(p.SumOpenInterestValue).Div(decimal.New(1, 6)).RoundFloor(4).String()
+}
+
 func CreatePerpetual(ctx context.Context, symbol, base, quote, source string, categories []string) (*Perpetual, error) {
 	s := session.SqliteDB(ctx)
 	s.Lock()

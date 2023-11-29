@@ -24,7 +24,7 @@ func LoopingTGNotify(ctx context.Context, bot *tgbotapi.BotAPI) {
 
 		var texts []string
 		for _, p := range ps {
-			texts = append(texts, fmt.Sprintf("%s, %s, Price %f, Rate %f, Value %f", p.Symbol, p.Categories, p.MarkPrice, p.LastFundingRate, p.SumOpenInterestValue))
+			texts = append(texts, fmt.Sprintf("%s, %s, Price %f, Rate %f, Value %sM", p.Symbol, p.Categories, p.MarkPrice, p.LastFundingRate, p.GetSumOpenInterestValue()))
 		}
 		if len(texts) > 0 {
 			msg := tgbotapi.NewMessage(configs.ChannelID, strings.Join(texts, "\n"))
