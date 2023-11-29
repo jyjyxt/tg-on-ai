@@ -35,20 +35,20 @@ func fetchExchangeInfo(ctx context.Context) error {
 		return err
 	}
 	for _, s := range info.Symbols {
-		if filter[s.Symbol] != nil {
-			continue
-		}
 		if s.QuoteAsset != "USDT" { // only fetch quote usdt
 			continue
 		}
 		if s.Status != "TRADING" {
 			continue
 		}
+		if filter[s.Symbol] != nil {
+			delete(filter, s.Symbol)
+			continue
+		}
 		_, err = models.CreatePerpetual(ctx, s.Symbol, s.BaseAsset, s.QuoteAsset, models.PerpetualSourceBinance, s.UnderlyingSubType)
 		if err != nil {
 			return err
 		}
-		delete(filter, s.Symbol)
 	}
 	for k := range filter {
 		err = models.DeletePerpetual(ctx, k)
