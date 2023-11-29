@@ -7,9 +7,23 @@ CREATE TABLE IF NOT EXISTS perpetuals (
   mark_price             REAL NOT NULL,
   last_funding_rate      REAL NOT NULL,
   open_interest_value    REAL NOT NULL,
-  updated_at              INTEGER NOT NULL,
+  updated_at             INTEGER NOT NULL,
 
   PRIMARY KEY(symbol)
 );
 
 CREATE INDEX IF NOT EXISTS perpetuals_funding_rate ON perpetuals(last_funding_rate);
+
+
+CREATE TABLE IF NOT EXISTS candles (
+  symbol                 TEXT NOT NULL,
+  open                   REAL    NOT NULL, -- 开盘价
+  high                   REAL    NOT NULL, -- 最高价
+  low                    REAL    NOT NULL, -- 最低价
+  close                  REAL    NOT NULL, -- 收盘价
+  volume                 REAL    NOT NULL, -- 成交量
+  open_time              INTEGER NOT NULL, -- 开盘时间
+  close_time             INTEGER NOT NULL, -- 收盘时间
+
+  PRIMARY KEY(symbol, open_time)
+);

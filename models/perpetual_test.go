@@ -1,23 +1,16 @@
 package models
 
 import (
-	"context"
 	"os"
 	"testing"
-	"tg-on-ai/session"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestPerpetual(t *testing.T) {
 	require := require.New(t)
-	path := "/tmp/test.sqlite3"
-	store, err := session.OpenDataSQLite3Store(path)
-	require.Nil(err)
-	ctx := context.Background()
-	ctx = session.WithSqliteDB(ctx, store)
-
-	defer os.Remove(path)
+	ctx := setup()
+	defer os.Remove(pathTest)
 
 	p, err := CreatePerpetual(ctx, "ETHBTC", "ETH", "BTC", PerpetualSourceBinance, []string{"pos"})
 	require.Nil(err)
