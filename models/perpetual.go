@@ -195,3 +195,22 @@ func findPerpetuals(ctx context.Context, query string, args ...any) ([]*Perpetua
 	}
 	return ps, nil
 }
+
+func DeletePerpetual(ctx context.Context, symbol string) error {
+	s := session.SqliteDB(ctx)
+	s.Lock()
+	defer s.Unlock()
+
+	txn, err := s.BeginTx(ctx)
+	if err != nil {
+		return err
+	}
+	defer txn.Rollback()
+
+	query := "DELETE FROM perpetuals WHERE symbol=?"
+	_, err = txn.ExecContext(ctx, query, symbol)
+	if err != nil {
+		return err
+	}
+	return txn.Commit()
+}
