@@ -78,7 +78,7 @@ func fetchPremiumIndex(ctx context.Context) error {
 		if filter[in.Symbol] == nil {
 			continue
 		}
-		_, err = models.UpdatePerpetual(ctx, in.Symbol, in.MarkPrice, in.LastFundingRate)
+		_, err = models.UpdatePerpetual(ctx, in.Symbol, in.MarkPrice, in.LastFundingRate, "", 0)
 		if err != nil {
 			return err
 		}

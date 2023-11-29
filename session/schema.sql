@@ -6,6 +6,9 @@ CREATE TABLE IF NOT EXISTS perpetuals (
   source                 TEXT NOT NULL,
   mark_price             REAL NOT NULL,
   last_funding_rate      REAL NOT NULL,
+  open_interest_value    REAL NOT NULL,
+  updated_at              INTEGER NOT NULL,
+
   PRIMARY KEY(symbol)
 );
 

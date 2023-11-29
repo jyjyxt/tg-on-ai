@@ -26,21 +26,25 @@ type Perpetual struct {
 	MarkPrice       float64
 	LastFundingRate float64
 
+	// https://fapi.binance.com/futures/data/openInterestHist?symbol=btcusdt&period=30m&startTime=1701221700000
+	SumOpenInterestValue float64
+
+	UpdatedAt int64
 	// https://fapi.binance.com/fapi/v1/fundingInfo
 	// FundingRateCap       string
 	// FundingRateFloor     string
 	// fundingIntervalHours int64
 }
 
-var perpetualCols = []string{"symbol", "base_asset", "quote_asset", "categories", "source", "mark_price", "last_funding_rate"}
+var perpetualCols = []string{"symbol", "base_asset", "quote_asset", "categories", "source", "mark_price", "last_funding_rate", "open_interest_value", "updated_at"}
 
 func (p *Perpetual) values() []any {
-	return []any{p.Symbol, p.BaseAsset, p.QuoteAsset, p.Categories, p.Source, p.MarkPrice, p.LastFundingRate}
+	return []any{p.Symbol, p.BaseAsset, p.QuoteAsset, p.Categories, p.Source, p.MarkPrice, p.LastFundingRate, p.SumOpenInterestValue, p.UpdatedAt}
 }
 
 func perpetualFromRow(row session.Row) (*Perpetual, error) {
 	var p Perpetual
-	err := row.Scan(&p.Symbol, &p.BaseAsset, &p.QuoteAsset, &p.Categories, &p.Source, &p.MarkPrice, &p.LastFundingRate)
+	err := row.Scan(&p.Symbol, &p.BaseAsset, &p.QuoteAsset, &p.Categories, &p.Source, &p.MarkPrice, &p.LastFundingRate, &p.SumOpenInterestValue, &p.UpdatedAt)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -73,7 +77,7 @@ func CreatePerpetual(ctx context.Context, symbol, base, quote, source string, ca
 	return p, txn.Commit()
 }
 
-func UpdatePerpetual(ctx context.Context, symbol, markPrice, fundingRate string) (*Perpetual, error) {
+func UpdatePerpetual(ctx context.Context, symbol, markPrice, fundingRate, sumOpenInterestValue string, updatedAt int64) (*Perpetual, error) {
 	p, err := ReadPerpetual(ctx, symbol)
 	if err != nil {
 		return nil, err
@@ -91,9 +95,19 @@ func UpdatePerpetual(ctx context.Context, symbol, markPrice, fundingRate string)
 	}
 	defer txn.Rollback()
 
-	p.MarkPrice = decimal.RequireFromString(markPrice).InexactFloat64()
-	p.LastFundingRate = decimal.RequireFromString(fundingRate).InexactFloat64()
-	err = s.ExecOne(ctx, txn, "UPDATE perpetuals SET mark_price=?, last_funding_rate=? WHERE symbol=?", p.MarkPrice, p.LastFundingRate, p.Symbol)
+	if markPrice != "" {
+		p.MarkPrice = decimal.RequireFromString(markPrice).InexactFloat64()
+	}
+	if fundingRate != "" {
+		p.LastFundingRate = decimal.RequireFromString(fundingRate).InexactFloat64()
+	}
+	if sumOpenInterestValue != "" {
+		p.SumOpenInterestValue = decimal.RequireFromString(sumOpenInterestValue).InexactFloat64()
+	}
+	if updatedAt > 0 {
+		p.UpdatedAt = updatedAt
+	}
+	err = s.ExecOne(ctx, txn, "UPDATE perpetuals SET mark_price=?, last_funding_rate=?, open_interest_value=?, updated_at=? WHERE symbol=?", p.MarkPrice, p.LastFundingRate, p.Symbol, p.SumOpenInterestValue, p.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
