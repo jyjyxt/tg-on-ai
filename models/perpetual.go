@@ -166,6 +166,15 @@ func ReadDiscretePerpetuals(ctx context.Context) ([]*Perpetual, error) {
 	return ps, nil
 }
 
+func ReadLowPerpetuals(ctx context.Context) ([]*Perpetual, error) {
+	query := fmt.Sprintf("SELECT %s FROM perpetuals ORDER BY last_funding_rate LIMIT 5", strings.Join(perpetualCols, ","))
+	ps, err := findPerpetuals(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	return ps, nil
+}
+
 func ReadPerpetualSet(ctx context.Context, source string) (map[string]*Perpetual, error) {
 	ps, err := ReadPerpetuals(ctx, source)
 	if err != nil {
@@ -217,4 +226,12 @@ func DeletePerpetual(ctx context.Context, symbol string) error {
 		return err
 	}
 	return txn.Commit()
+}
+
+func PerpetualsForHuman(ps []*Perpetual) string {
+	var tt []string
+	for _, p := range ps {
+		tt = append(tt, fmt.Sprintf("%s, %s, Price %f, Rate %f, Value %sM", p.Symbol, p.Categories, p.MarkPrice, p.LastFundingRate, p.GetSumOpenInterestValue()))
+	}
+	return strings.Join(tt, "\n")
 }

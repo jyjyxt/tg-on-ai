@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"strings"
 	"tg-on-ai/configs"
@@ -60,18 +59,20 @@ func main() {
 					return
 				}
 				text = strings.Join(cs, ", ")
+			case "low":
+				ps, err := models.ReadLowPerpetuals(ctx)
+				if err != nil {
+					return
+				}
+				text = models.PerpetualsForHuman(ps)
 			default:
 				ps, err := models.ReadPerpetualsByCategory(ctx, cmd)
 				if err != nil {
 					return
 				}
-				text = imsg.Text + " 🤟"
-				if len(ps) != 0 {
-					var tt []string
-					for _, p := range ps {
-						tt = append(tt, fmt.Sprintf("%s, %s, Price %f, Rate %f", p.Symbol, p.Categories, p.MarkPrice, p.LastFundingRate))
-					}
-					text = strings.Join(tt, "\n")
+				text = models.PerpetualsForHuman(ps)
+				if text == "" {
+					text = imsg.Text + " 🤟"
 				}
 			}
 			if text == "" {

@@ -2,9 +2,7 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"log"
-	"strings"
 	"tg-on-ai/configs"
 	"tg-on-ai/models"
 	"time"
@@ -22,12 +20,9 @@ func LoopingTGNotify(ctx context.Context, bot *tgbotapi.BotAPI) {
 			continue
 		}
 
-		var texts []string
-		for _, p := range ps {
-			texts = append(texts, fmt.Sprintf("%s, %s, Price %f, Rate %f, Value %sM", p.Symbol, p.Categories, p.MarkPrice, p.LastFundingRate, p.GetSumOpenInterestValue()))
-		}
-		if len(texts) > 0 {
-			msg := tgbotapi.NewMessage(configs.ChannelID, strings.Join(texts, "\n"))
+		text := models.PerpetualsForHuman(ps)
+		if text != "" {
+			msg := tgbotapi.NewMessage(configs.ChannelID, text)
 			if _, err := bot.Send(msg); err != nil {
 				time.Sleep(time.Second)
 				continue
