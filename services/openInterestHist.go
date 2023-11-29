@@ -25,6 +25,7 @@ func LoopingOpenInterestHist(ctx context.Context) {
 			}
 			time.Sleep(time.Second)
 		}
+		time.Sleep(time.Second * 30)
 	}
 }
 
@@ -33,6 +34,7 @@ func fetchOpenInterestHist(ctx context.Context, p *models.Perpetual) error {
 	if t.Add(time.Minute * 30).After(time.Now()) {
 		return nil
 	}
+	p.UpdatedAt = time.Now().Add(time.Minute * -30).UnixMilli()
 	client := futures.NewClient("", "")
 	s := client.NewOpenInterestStatisticsService()
 	s.Symbol(p.Symbol)

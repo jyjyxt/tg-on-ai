@@ -107,7 +107,7 @@ func UpdatePerpetual(ctx context.Context, symbol, markPrice, fundingRate, sumOpe
 	if updatedAt > 0 {
 		p.UpdatedAt = updatedAt
 	}
-	err = s.ExecOne(ctx, txn, "UPDATE perpetuals SET mark_price=?, last_funding_rate=?, open_interest_value=?, updated_at=? WHERE symbol=?", p.MarkPrice, p.LastFundingRate, p.Symbol, p.SumOpenInterestValue, p.UpdatedAt)
+	err = s.ExecOne(ctx, txn, "UPDATE perpetuals SET mark_price=?, last_funding_rate=?, open_interest_value=?, updated_at=? WHERE symbol=?", p.MarkPrice, p.LastFundingRate, p.SumOpenInterestValue, p.UpdatedAt, p.Symbol)
 	if err != nil {
 		return nil, err
 	}
