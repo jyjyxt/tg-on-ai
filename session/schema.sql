@@ -34,5 +34,6 @@ CREATE TABLE IF NOT EXISTS strategies (
   name                   TEXT NOT NULL,
   action                 INTEGER NOT NULL,
   score                  REAL NOT NULL,
+  open_time              INTEGER NOT NULL,
   PRIMARY KEY(symbol, name)
 );

@@ -12,7 +12,7 @@ func TestStrategy(t *testing.T) {
 	ctx := setup()
 	defer os.Remove(pathTest)
 
-	strategy, err := CreateStrategy(ctx, "ETHBTC", "macd", 1, -80)
+	strategy, err := CreateStrategy(ctx, "ETHBTC", "macd", 1, -80, 1701259200000)
 	require.Nil(err)
 	require.NotNil(strategy)
 	strategies, err := ReadStrategies(ctx, "ETHBTC")
@@ -21,6 +21,17 @@ func TestStrategy(t *testing.T) {
 	strategy, err = ReadStrategy(ctx, "ETHBTC", "macd")
 	require.Nil(err)
 	require.NotNil(strategy)
-	require.Equal(1, strategy.Action)
+	require.Equal(int64(1), strategy.Action)
 	require.Equal(float64(-80), strategy.Score)
+	require.Equal(int64(1701259200000), strategy.OpenTime)
+
+	strategy, err = CreateStrategy(ctx, "ETHBTC", "macd", -1, -60, 1701259100000)
+	require.Nil(err)
+	require.NotNil(strategy)
+	strategy, err = ReadStrategy(ctx, "ETHBTC", "macd")
+	require.Nil(err)
+	require.NotNil(strategy)
+	require.Equal(int64(-1), strategy.Action)
+	require.Equal(float64(-60), strategy.Score)
+	require.Equal(int64(1701259100000), strategy.OpenTime)
 }
