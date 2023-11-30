@@ -23,6 +23,8 @@ func main() {
 	go services.LoopingExchangeInfo(ctx)
 	go services.LoopingPremiumIndex(ctx)
 	go services.LoopingOpenInterestHist(ctx)
+	go services.LoopingCandle(ctx)
+	go services.LoopingStrategy(ctx)
 	// token := "6337999999:AAFimM8x_invalidetokenforexample"
 	bot, err := tgbotapi.NewBotAPI(configs.Token)
 	if err != nil {

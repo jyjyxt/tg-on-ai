@@ -8,6 +8,10 @@ import (
 	"tg-on-ai/session"
 )
 
+const (
+	StrategyNameMACD = "MACD"
+)
+
 type Strategy struct {
 	Symbol   string
 	Name     string

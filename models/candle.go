@@ -39,16 +39,6 @@ func candleFromRow(row session.Row) (*Candle, error) {
 }
 
 func CreateCandle(ctx context.Context, symbol, open, high, low, close, volume string, openTime, closeTime int64) (*Candle, error) {
-	s := session.SqliteDB(ctx)
-	s.Lock()
-	defer s.Unlock()
-
-	txn, err := s.BeginTx(ctx)
-	if err != nil {
-		return nil, err
-	}
-	defer txn.Rollback()
-
 	c := &Candle{
 		Symbol:    symbol,
 		Open:      decimal.RequireFromString(open).InexactFloat64(),
@@ -58,6 +48,27 @@ func CreateCandle(ctx context.Context, symbol, open, high, low, close, volume st
 		Volume:    decimal.RequireFromString(volume).InexactFloat64(),
 		OpenTime:  openTime,
 		CloseTime: closeTime,
+	}
+	old, err := ReadCandle(ctx, c.Symbol, c.OpenTime)
+	if err != nil {
+		return nil, err
+	}
+
+	s := session.SqliteDB(ctx)
+	s.Lock()
+	defer s.Unlock()
+
+	txn, err := s.BeginTx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer txn.Rollback()
+	if old != nil {
+		err = s.ExecOne(ctx, txn, "UPDATE candles SET high=?, low=?, close=?, volume=? WHERE symbol=? AND open_time=?", c.High, c.Low, c.Close, c.Volume, c.Symbol, c.OpenTime)
+		if err != nil {
+			return nil, err
+		}
+		return c, txn.Commit()
 	}
 	query := session.BuildInsertionSQL("candles", candleCols)
 	_, err = txn.ExecContext(ctx, query, c.values()...)
@@ -119,6 +130,12 @@ func ReadCandles(ctx context.Context, symbol string) ([]*Candle, error) {
 		cs = append(cs, c)
 	}
 	return cs, nil
+}
+
+func ReadCandle(ctx context.Context, symbol string, open int64) (*Candle, error) {
+	query := fmt.Sprintf("SELECT %s FROM candles WHERE symbol=? AND open_time=?", strings.Join(candleCols, ","))
+	row := session.SqliteDB(ctx).QueryRow(ctx, query, symbol, open)
+	return candleFromRow(row)
 }
 
 func DeleteCandles(ctx context.Context, symbol string) error {
