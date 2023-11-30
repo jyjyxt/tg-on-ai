@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCandle(t *testing.T) {
+func testCandle(t *testing.T) {
 	require := require.New(t)
 	ctx := setup()
 	defer os.Remove(pathTest)

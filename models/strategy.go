@@ -31,7 +31,13 @@ func strategyFromRow(row session.Row) (*Strategy, error) {
 }
 
 func CreateStrategy(ctx context.Context, symbol, name string, action int, score float64) (*Strategy, error) {
-	old, err := ReadStrategy(ctx, symbol, name)
+	st := &Strategy{
+		Symbol: symbol,
+		Name:   name,
+		Action: action,
+		Score:  score,
+	}
+	old, err := ReadStrategy(ctx, st.Symbol, st.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -44,13 +50,6 @@ func CreateStrategy(ctx context.Context, symbol, name string, action int, score 
 		return nil, err
 	}
 	defer txn.Rollback()
-
-	st := &Strategy{
-		Symbol: symbol,
-		Name:   name,
-		Action: action,
-		Score:  score,
-	}
 	if old != nil {
 		err = s.ExecOne(ctx, txn, "UPDATE strategies SET action=?, score=? WHERE symbol=? AND name=?", st.Action, st.Score, st.Symbol, st.Name)
 		if err != nil {
@@ -85,6 +84,6 @@ func ReadStrategies(ctx context.Context, symbol string) ([]*Strategy, error) {
 
 func ReadStrategy(ctx context.Context, symbol, name string) (*Strategy, error) {
 	query := fmt.Sprintf("SELECT %s FROM strategies WHERE symbol=? AND name=?", strings.Join(strategyCols, ","))
-	row := session.SqliteDB(ctx).QueryRow(ctx, query, symbol)
+	row := session.SqliteDB(ctx).QueryRow(ctx, query, symbol, name)
 	return strategyFromRow(row)
 }
