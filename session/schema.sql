@@ -27,3 +27,12 @@ CREATE TABLE IF NOT EXISTS candles (
 
   PRIMARY KEY(symbol, open_time)
 );
+
+
+CREATE TABLE IF NOT EXISTS strategies (
+  symbol                 TEXT NOT NULL,
+  name                   TEXT NOT NULL,
+  action                 INTEGER NOT NULL,
+  score                  REAL NOT NULL,
+  PRIMARY KEY(symbol, name)
+);
