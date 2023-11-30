@@ -35,11 +35,27 @@ func fetchStrategy(ctx context.Context, p *models.Perpetual) error {
 		return err
 	}
 
-	actions := indicator.MacdStrategy(asset)
-	if len(actions) == 0 {
-		return nil
+	{
+		actions := indicator.MacdStrategy(asset)
+		if len(actions) == 0 {
+			return nil
+		}
+		l := len(actions)
+		_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameMACD, int64(actions[l-1]), 0, asset.Date[l-1].Unix())
+		if err != nil {
+			return err
+		}
 	}
-	l := len(actions)
-	_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameMACD, int64(actions[l-1]), 0, asset.Date[l-1].Unix())
-	return err
+	{
+		actions := indicator.DefaultKdjStrategy(asset)
+		if len(actions) == 0 {
+			return nil
+		}
+		l := len(actions)
+		_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameKDJ, int64(actions[l-1]), 0, asset.Date[l-1].Unix())
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

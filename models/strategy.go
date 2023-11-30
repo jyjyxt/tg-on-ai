@@ -10,6 +10,7 @@ import (
 
 const (
 	StrategyNameMACD = "MACD"
+	StrategyNameKDJ  = "KDJ"
 )
 
 type Strategy struct {
