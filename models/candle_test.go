@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func testCandle(t *testing.T) {
+func TestCandle(t *testing.T) {
 	require := require.New(t)
 	ctx := setup()
 	defer os.Remove(pathTest)
@@ -45,5 +45,5 @@ func testCandle(t *testing.T) {
 	asset, err := ReadCandlesAsAsset(ctx, symbol)
 	require.Nil(err)
 	require.NotNil(asset)
-	log.Println(indicator.MacdStrategy(asset))
+	log.Println(indicator.BalanceOfPower(asset.Opening, asset.High, asset.Low, asset.Closing))
 }
