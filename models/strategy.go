@@ -9,39 +9,42 @@ import (
 )
 
 const (
-	StrategyNameMACD = "MACD"
-	StrategyNameKDJ  = "KDJ"
+	StrategyNameMACD  = "MACD"
+	StrategyNameKDJ   = "KDJ"
+	StrategyNameAroon = "Aroon"
 )
 
 type Strategy struct {
 	Symbol   string
 	Name     string
 	Action   int64
-	Score    float64
+	ScoreX   float64
+	ScoreY   float64
 	OpenTime int64
 }
 
-var strategyCols = []string{"symbol", "name", "action", "score", "open_time"}
+var strategyCols = []string{"symbol", "name", "action", "score_x", "score_y", "open_time"}
 
 func (s *Strategy) values() []any {
-	return []any{s.Symbol, s.Name, s.Action, s.Score, s.OpenTime}
+	return []any{s.Symbol, s.Name, s.Action, s.ScoreX, s.ScoreY, s.OpenTime}
 }
 
 func strategyFromRow(row session.Row) (*Strategy, error) {
 	var s Strategy
-	err := row.Scan(&s.Symbol, &s.Name, &s.Action, &s.Score, &s.OpenTime)
+	err := row.Scan(&s.Symbol, &s.Name, &s.Action, &s.ScoreX, &s.ScoreY, &s.OpenTime)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 	return &s, err
 }
 
-func CreateStrategy(ctx context.Context, symbol, name string, action int64, score float64, t int64) (*Strategy, error) {
+func CreateStrategy(ctx context.Context, symbol, name string, action int64, scoreX, scoreY float64, t int64) (*Strategy, error) {
 	st := &Strategy{
 		Symbol:   symbol,
 		Name:     name,
 		Action:   action,
-		Score:    score,
+		ScoreX:   scoreX,
+		ScoreY:   scoreY,
 		OpenTime: t,
 	}
 	old, err := ReadStrategy(ctx, st.Symbol, st.Name)
@@ -58,7 +61,7 @@ func CreateStrategy(ctx context.Context, symbol, name string, action int64, scor
 	}
 	defer txn.Rollback()
 	if old != nil {
-		err = s.ExecOne(ctx, txn, "UPDATE strategies SET action=?, score=?, open_time=? WHERE symbol=? AND name=?", st.Action, st.Score, st.OpenTime, st.Symbol, st.Name)
+		err = s.ExecOne(ctx, txn, "UPDATE strategies SET action=?, score_x=?, score_y=?, open_time=? WHERE symbol=? AND name=?", st.Action, st.ScoreX, st.ScoreY, st.OpenTime, st.Symbol, st.Name)
 		if err != nil {
 			return nil, err
 		}

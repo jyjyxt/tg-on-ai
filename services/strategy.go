@@ -41,18 +41,18 @@ func fetchStrategy(ctx context.Context, p *models.Perpetual) error {
 			return nil
 		}
 		l := len(actions)
-		_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameMACD, int64(actions[l-1]), 0, asset.Date[l-1].Unix())
+		_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameMACD, int64(actions[l-1]), 0, 0, asset.Date[l-1].Unix())
 		if err != nil {
 			return err
 		}
 	}
 	{
-		actions := indicator.DefaultKdjStrategy(asset)
-		if len(actions) == 0 {
+		aroonUp, aroonDown := indicator.Aroon(asset.High, asset.Low)
+		if len(aroonUp) == 0 {
 			return nil
 		}
-		l := len(actions)
-		_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameKDJ, int64(actions[l-1]), 0, asset.Date[l-1].Unix())
+		l := len(aroonUp)
+		_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameAroon, 0, aroonUp[l-1], aroonDown[l-1], asset.Date[l-1].Unix())
 		if err != nil {
 			return err
 		}
