@@ -228,10 +228,16 @@ func DeletePerpetual(ctx context.Context, symbol string) error {
 	return txn.Commit()
 }
 
-func PerpetualsForHuman(ps []*Perpetual) string {
+func PerpetualsForHuman(ctx context.Context, ps []*Perpetual) string {
 	var tt []string
 	for _, p := range ps {
-		tt = append(tt, fmt.Sprintf("%s, %s, Price %f, Rate %f, Value %sM", p.Symbol, p.Categories, p.MarkPrice, p.LastFundingRate, p.GetSumOpenInterestValue()))
+		in := fmt.Sprintf("%s, %s, Price %f, Rate %f, Value %sM", p.Symbol, p.Categories, p.MarkPrice, p.LastFundingRate, p.GetSumOpenInterestValue())
+		ss, _ := ReadStrategies(ctx, p.Symbol)
+		r := make([]string, len(ss))
+		for i, s := range ss {
+			r[i] = s.Result()
+		}
+		tt = append(tt, fmt.Sprintf("%s\n%s", in, strings.Join(r, ",")))
 	}
 	return strings.Join(tt, "\n")
 }

@@ -39,6 +39,18 @@ func strategyFromRow(row session.Row) (*Strategy, error) {
 	return &s, err
 }
 
+func (s *Strategy) Result() string {
+	switch s.Name {
+	case StrategyNameMACD:
+		return fmt.Sprintf("%s:%d", s.Name, s.Action)
+	case StrategyNameAroon:
+		return fmt.Sprintf("%s:%2f-%2f", s.Name, s.ScoreX, s.ScoreY)
+	case StrategyNameWilliamsR:
+		return fmt.Sprintf("%s:%2f", s.Name, s.ScoreX)
+	}
+	return ""
+}
+
 func CreateStrategy(ctx context.Context, symbol, name string, action int64, scoreX, scoreY float64, t int64) (*Strategy, error) {
 	st := &Strategy{
 		Symbol:   symbol,

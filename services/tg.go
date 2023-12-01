@@ -20,7 +20,7 @@ func LoopingTGNotify(ctx context.Context, bot *tgbotapi.BotAPI) {
 			continue
 		}
 
-		text := models.PerpetualsForHuman(ps)
+		text := models.PerpetualsForHuman(ctx, ps)
 		if text != "" {
 			msg := tgbotapi.NewMessage(configs.ChannelID, text)
 			if _, err := bot.Send(msg); err != nil {

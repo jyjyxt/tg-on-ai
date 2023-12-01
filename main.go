@@ -66,13 +66,13 @@ func main() {
 				if err != nil {
 					return
 				}
-				text = models.PerpetualsForHuman(ps)
+				text = models.PerpetualsForHuman(ctx, ps)
 			default:
 				ps, err := models.ReadPerpetualsByCategory(ctx, cmd)
 				if err != nil {
 					return
 				}
-				text = models.PerpetualsForHuman(ps)
+				text = models.PerpetualsForHuman(ctx, ps)
 				if text == "" {
 					text = imsg.Text + " 🤟"
 				}
