@@ -178,7 +178,7 @@ func ReadBestPerpetuals(ctx context.Context, action string) ([]*Perpetual, error
 	var symbols []string
 	if action == "sell" {
 		for k, v := range filters {
-			if v == -StrategyTotal {
+			if v == -(StrategyTotal - 1) {
 				symbols = append(symbols, k)
 			}
 		}
