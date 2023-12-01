@@ -38,6 +38,9 @@ func fetchExchangeInfo(ctx context.Context) error {
 		if s.QuoteAsset != "USDT" { // only fetch quote usdt
 			continue
 		}
+		if s.Symbol != s.BaseAsset+s.QuoteAsset {
+			continue
+		}
 		if s.Status != "TRADING" {
 			continue
 		}

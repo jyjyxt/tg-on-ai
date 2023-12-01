@@ -47,6 +47,17 @@ func fetchStrategy(ctx context.Context, p *models.Perpetual) error {
 		}
 	}
 	{
+		result := indicator.WilliamsR(asset.Low, asset.High, asset.Closing)
+		if len(result) == 0 {
+			return nil
+		}
+		l := len(result)
+		_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameAroon, 0, result[l-1], 0, asset.Date[l-1].Unix())
+		if err != nil {
+			return err
+		}
+	}
+	{
 		aroonUp, aroonDown := indicator.Aroon(asset.High, asset.Low)
 		if len(aroonUp) == 0 {
 			return nil
