@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS perpetuals (
 );
 
 CREATE INDEX IF NOT EXISTS perpetuals_funding_rate ON perpetuals(last_funding_rate);
+CREATE INDEX IF NOT EXISTS perpetuals_value ON perpetuals(open_interest_value);
 
 
 CREATE TABLE IF NOT EXISTS candles (

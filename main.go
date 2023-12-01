@@ -67,6 +67,12 @@ func main() {
 					return
 				}
 				text = models.PerpetualsForHuman(ctx, ps)
+			case "buy", "sell":
+				ps, err := models.ReadBestPerpetuals(ctx, cmd)
+				if err != nil {
+					return
+				}
+				text = models.PerpetualsForHuman(ctx, ps)
 			default:
 				ps, err := models.ReadPerpetualsByCategory(ctx, cmd)
 				if err != nil {

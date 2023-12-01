@@ -166,6 +166,37 @@ func ReadDiscretePerpetuals(ctx context.Context) ([]*Perpetual, error) {
 	return ps, nil
 }
 
+func ReadBestPerpetuals(ctx context.Context, action string) ([]*Perpetual, error) {
+	ss, err := ReadStrategiesAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+	filters := make(map[string]int64, 0)
+	for _, s := range ss {
+		filters[s.Symbol] += s.getAction()
+	}
+	var symbols []string
+	if action == "sell" {
+		for k, v := range filters {
+			if v == -StrategyTotal {
+				symbols = append(symbols, k)
+			}
+		}
+	}
+	if action == "buy" {
+		for k, v := range filters {
+			if v == StrategyTotal {
+				symbols = append(symbols, k)
+			}
+		}
+	}
+	if len(symbols) == 0 {
+		return nil, nil
+	}
+	query := fmt.Sprintf("SELECT %s FROM perpetuals WHERE symbol IN ('%s') ORDER BY open_interest_value DESC LIMIT 5", strings.Join(perpetualCols, ","), strings.Join(symbols, "','"))
+	return findPerpetuals(ctx, query)
+}
+
 func ReadLowPerpetuals(ctx context.Context) ([]*Perpetual, error) {
 	query := fmt.Sprintf("SELECT %s FROM perpetuals ORDER BY last_funding_rate LIMIT 5", strings.Join(perpetualCols, ","))
 	ps, err := findPerpetuals(ctx, query)
@@ -229,6 +260,9 @@ func DeletePerpetual(ctx context.Context, symbol string) error {
 }
 
 func PerpetualsForHuman(ctx context.Context, ps []*Perpetual) string {
+	if len(ps) == 0 {
+		return "nothing"
+	}
 	var tt []string
 	for _, p := range ps {
 		in := fmt.Sprintf("%s, %s, Price %f, Rate %f, Value %sM", p.Symbol, p.Categories, p.MarkPrice, p.LastFundingRate, p.GetSumOpenInterestValue())

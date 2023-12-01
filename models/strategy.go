@@ -13,6 +13,8 @@ const (
 	StrategyNameKDJ       = "KDJ"
 	StrategyNameAroon     = "Aroon"
 	StrategyNameWilliamsR = "WilliamsR"
+
+	StrategyTotal int64 = 3
 )
 
 type Strategy struct {
@@ -22,6 +24,8 @@ type Strategy struct {
 	ScoreX   float64
 	ScoreY   float64
 	OpenTime int64
+
+	Score int64
 }
 
 var strategyCols = []string{"symbol", "name", "action", "score_x", "score_y", "open_time"}
@@ -49,6 +53,30 @@ func (s *Strategy) Result() string {
 		return fmt.Sprintf("%s:%.2f", s.Name, s.ScoreX)
 	}
 	return ""
+}
+
+func (s *Strategy) getAction() int64 {
+	switch s.Name {
+	case StrategyNameMACD:
+		return s.Action
+	case StrategyNameAroon:
+		if s.ScoreX > 70 && s.ScoreY < 30 {
+			return 1
+		}
+		if s.ScoreY > 70 && s.ScoreX < 30 {
+			return -1
+		}
+		return 0
+	case StrategyNameWilliamsR:
+		if s.ScoreX < -79 {
+			return 1
+		}
+		if s.ScoreX > -21 {
+			return -1
+		}
+		return 0
+	}
+	return 0
 }
 
 func CreateStrategy(ctx context.Context, symbol, name string, action int64, scoreX, scoreY float64, t int64) (*Strategy, error) {
@@ -86,6 +114,23 @@ func CreateStrategy(ctx context.Context, symbol, name string, action int64, scor
 		return nil, err
 	}
 	return st, txn.Commit()
+}
+
+func ReadStrategiesAll(ctx context.Context) ([]*Strategy, error) {
+	query := fmt.Sprintf("SELECT %s FROM strategies", strings.Join(strategyCols, ","))
+	rows, err := session.SqliteDB(ctx).Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	var ps []*Strategy
+	for rows.Next() {
+		p, err := strategyFromRow(rows)
+		if err != nil {
+			return nil, err
+		}
+		ps = append(ps, p)
+	}
+	return ps, nil
 }
 
 func ReadStrategies(ctx context.Context, symbol string) ([]*Strategy, error) {
