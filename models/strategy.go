@@ -9,9 +9,10 @@ import (
 )
 
 const (
-	StrategyNameMACD  = "MACD"
-	StrategyNameKDJ   = "KDJ"
-	StrategyNameAroon = "Aroon"
+	StrategyNameMACD      = "MACD"
+	StrategyNameKDJ       = "KDJ"
+	StrategyNameAroon     = "Aroon"
+	StrategyNameWilliamsR = "WilliamsR"
 )
 
 type Strategy struct {

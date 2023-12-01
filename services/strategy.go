@@ -52,7 +52,7 @@ func fetchStrategy(ctx context.Context, p *models.Perpetual) error {
 			return nil
 		}
 		l := len(result)
-		_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameAroon, 0, result[l-1], 0, asset.Date[l-1].Unix())
+		_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameWilliamsR, 0, result[l-1], 0, asset.Date[l-1].Unix())
 		if err != nil {
 			return err
 		}
