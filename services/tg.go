@@ -21,22 +21,25 @@ func LoopingTGNotify(ctx context.Context, bot *tgbotapi.BotAPI) {
 		ps, _ = models.ReadDiscretePerpetuals(ctx, "low")
 		if len(ps) > 0 {
 			if text != "" {
-				text = text + "\nRatio LOW:\n"
+				text = text + "\n"
 			}
+			text = text + "Ratio LOW:\n"
 			text = text + models.PerpetualsForHuman(ctx, ps)
 		}
 		buy, _ := models.ReadBestPerpetuals(ctx, "buy")
 		if len(buy) > 0 {
 			if text != "" {
-				text = text + "\nBUY:\n"
+				text = text + "\n"
 			}
+			text = text + "BUY:\n"
 			text = text + models.PerpetualsForHuman(ctx, buy)
 		}
 		sell, _ := models.ReadBestPerpetuals(ctx, "sell")
 		if len(sell) > 0 {
 			if text != "" {
-				text = text + "\nSELL:\n"
+				text = text + "\n"
 			}
+			text = text + "SELL:\n"
 			text = text + models.PerpetualsForHuman(ctx, sell)
 		}
 		if text != "" {
