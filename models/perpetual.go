@@ -153,10 +153,10 @@ func ReadPerpetualsByCategory(ctx context.Context, category string) ([]*Perpetua
 
 func ReadDiscretePerpetuals(ctx context.Context, path string) ([]*Perpetual, error) {
 	query := fmt.Sprintf("SELECT %s FROM perpetuals WHERE last_funding_rate>? ORDER BY last_funding_rate DESC LIMIT 3", strings.Join(perpetualCols, ","))
-	rate := 0.00002
+	rate := 0.0002
 	if path == "low" {
 		query = fmt.Sprintf("SELECT %s FROM perpetuals WHERE last_funding_rate<? ORDER BY last_funding_rate LIMIT 3", strings.Join(perpetualCols, ","))
-		rate = -0.00002
+		rate = -0.0002
 	}
 	ps, err := findPerpetuals(ctx, query, rate)
 	if err != nil {

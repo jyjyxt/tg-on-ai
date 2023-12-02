@@ -20,7 +20,10 @@ func LoopingTGNotify(ctx context.Context, bot *tgbotapi.BotAPI) {
 		}
 		ps, _ = models.ReadDiscretePerpetuals(ctx, "low")
 		if len(ps) > 0 {
-			text = "\nRatio LOW:\n" + models.PerpetualsForHuman(ctx, ps)
+			if text != "" {
+				text = text + "\nRatio LOW:\n"
+			}
+			text = text + models.PerpetualsForHuman(ctx, ps)
 		}
 		buy, _ := models.ReadBestPerpetuals(ctx, "buy")
 		if len(buy) > 0 {
