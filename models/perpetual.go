@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 	"strings"
 	"tg-on-ai/session"
 
@@ -265,7 +266,7 @@ func PerpetualsForHuman(ctx context.Context, ps []*Perpetual) string {
 	}
 	var tt []string
 	for _, p := range ps {
-		in := fmt.Sprintf("%s, %s, Price %f, Rate %f, Value %sM", p.Symbol, p.Categories, p.MarkPrice, p.LastFundingRate, p.GetSumOpenInterestValue())
+		in := fmt.Sprintf("%s, %s, Price %s, Rate %f, Value %sM", p.Symbol, p.Categories, strconv.FormatFloat(p.MarkPrice, 'f', -1, 64), p.LastFundingRate*100, p.GetSumOpenInterestValue())
 		ss, _ := ReadStrategies(ctx, p.Symbol)
 		r := make([]string, len(ss))
 		for i, s := range ss {
