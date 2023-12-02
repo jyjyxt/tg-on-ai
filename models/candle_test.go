@@ -45,5 +45,5 @@ func TestCandle(t *testing.T) {
 	asset, err := ReadCandlesAsAsset(ctx, symbol)
 	require.Nil(err)
 	require.NotNil(asset)
-	log.Println(indicator.CommunityChannelIndex(12, asset.High, asset.Low, asset.Closing))
+	log.Println(indicator.ParabolicSar(asset.High, asset.Low, asset.Closing))
 }

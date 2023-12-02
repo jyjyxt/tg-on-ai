@@ -13,14 +13,29 @@ import (
 func LoopingTGNotify(ctx context.Context, bot *tgbotapi.BotAPI) {
 	log.Println("LoopingTGNotify starting")
 	for {
-		ps, err := models.ReadDiscretePerpetuals(ctx)
-		if err != nil {
-			log.Printf("ReadDiscretePerpetuals() => %#v", err)
-			time.Sleep(time.Second)
-			continue
+		ps, _ := models.ReadDiscretePerpetuals(ctx, "high")
+		var text string
+		if len(ps) > 0 {
+			text = "Ratio HIGH:\n" + models.PerpetualsForHuman(ctx, ps)
 		}
-
-		text := models.PerpetualsForHuman(ctx, ps)
+		ps, _ = models.ReadDiscretePerpetuals(ctx, "low")
+		if len(ps) > 0 {
+			text = "\nRatio LOW:\n" + models.PerpetualsForHuman(ctx, ps)
+		}
+		buy, _ := models.ReadBestPerpetuals(ctx, "buy")
+		if len(buy) > 0 {
+			if text != "" {
+				text = text + "\nBUY:\n"
+			}
+			text = text + models.PerpetualsForHuman(ctx, buy)
+		}
+		sell, _ := models.ReadBestPerpetuals(ctx, "sell")
+		if len(sell) > 0 {
+			if text != "" {
+				text = text + "\nSELL:\n"
+			}
+			text = text + models.PerpetualsForHuman(ctx, sell)
+		}
 		if text != "" {
 			msg := tgbotapi.NewMessage(configs.ChannelID, text)
 			if _, err := bot.Send(msg); err != nil {

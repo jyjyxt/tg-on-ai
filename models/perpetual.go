@@ -151,19 +151,17 @@ func ReadPerpetualsByCategory(ctx context.Context, category string) ([]*Perpetua
 	return findPerpetuals(ctx, query, "%"+category+"%")
 }
 
-func ReadDiscretePerpetuals(ctx context.Context) ([]*Perpetual, error) {
-	lower := fmt.Sprintf("SELECT %s FROM perpetuals ORDER BY last_funding_rate DESC LIMIT 3", strings.Join(perpetualCols, ","))
-	ps, err := findPerpetuals(ctx, lower)
+func ReadDiscretePerpetuals(ctx context.Context, path string) ([]*Perpetual, error) {
+	query := fmt.Sprintf("SELECT %s FROM perpetuals WHERE last_funding_rate>? ORDER BY last_funding_rate DESC LIMIT 3", strings.Join(perpetualCols, ","))
+	rate := 0.00002
+	if path == "low" {
+		query = fmt.Sprintf("SELECT %s FROM perpetuals WHERE last_funding_rate<? ORDER BY last_funding_rate LIMIT 3", strings.Join(perpetualCols, ","))
+		rate = -0.00002
+	}
+	ps, err := findPerpetuals(ctx, query, rate)
 	if err != nil {
 		return nil, err
 	}
-
-	higher := fmt.Sprintf("SELECT %s FROM perpetuals ORDER BY last_funding_rate LIMIT 3", strings.Join(perpetualCols, ","))
-	pss, err := findPerpetuals(ctx, higher)
-	if err != nil {
-		return nil, err
-	}
-	ps = append(ps, pss...)
 	return ps, nil
 }
 
@@ -179,7 +177,7 @@ func ReadBestPerpetuals(ctx context.Context, action string) ([]*Perpetual, error
 	var symbols []string
 	if action == "sell" {
 		for k, v := range filters {
-			if v == -(StrategyTotal - 1) {
+			if v == -StrategyTotal {
 				symbols = append(symbols, k)
 			}
 		}
