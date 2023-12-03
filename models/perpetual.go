@@ -209,7 +209,7 @@ func ReadPullbackPerpetuals(ctx context.Context) ([]*Perpetual, error) {
 	var filters []*Perpetual
 	for _, p := range perpetuals {
 		if pric := candles[p.Symbol]; pric > 0 {
-			if p.MarkPrice/pric < 0.8 {
+			if p.MarkPrice/pric < 0.85 {
 				filters = append(filters, p)
 			}
 		}
