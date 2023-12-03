@@ -73,6 +73,8 @@ func main() {
 					return
 				}
 				text = models.PerpetualsForHuman(ctx, ps)
+			case "go":
+				text = models.Notify(ctx)
 			default:
 				ps, err := models.ReadPerpetualsByCategory(ctx, cmd)
 				if err != nil {

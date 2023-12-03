@@ -283,6 +283,47 @@ func DeletePerpetual(ctx context.Context, symbol string) error {
 	return txn.Commit()
 }
 
+func Notify(ctx context.Context) string {
+	ps, _ := ReadDiscretePerpetuals(ctx, "high")
+	var text string
+	if len(ps) > 0 {
+		text = "Ratio HIGH:\n----------\n" + PerpetualsForHuman(ctx, ps)
+	}
+	ps, _ = ReadDiscretePerpetuals(ctx, "low")
+	if len(ps) > 0 {
+		if text != "" {
+			text = text + "\n"
+		}
+		text = text + "Ratio LOW:\n----------\n"
+		text = text + PerpetualsForHuman(ctx, ps)
+	}
+	buy, _ := ReadBestPerpetuals(ctx, "buy")
+	if len(buy) > 0 {
+		if text != "" {
+			text = text + "\n"
+		}
+		text = text + "BUY:\n----\n"
+		text = text + PerpetualsForHuman(ctx, buy)
+	}
+	sell, _ := ReadBestPerpetuals(ctx, "sell")
+	if len(sell) > 0 {
+		if text != "" {
+			text = text + "\n"
+		}
+		text = text + "SELL:\n-----\n"
+		text = text + PerpetualsForHuman(ctx, sell)
+	}
+	pullback, _ := ReadPullbackPerpetuals(ctx)
+	if len(pullback) > 0 {
+		if text != "" {
+			text = text + "\n"
+		}
+		text = text + "Pullback:\n-------\n"
+		text = text + PerpetualsForHuman(ctx, pullback)
+	}
+	return text
+}
+
 func PerpetualsForHuman(ctx context.Context, ps []*Perpetual) string {
 	if len(ps) == 0 {
 		return "nothing"
