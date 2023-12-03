@@ -42,6 +42,14 @@ func LoopingTGNotify(ctx context.Context, bot *tgbotapi.BotAPI) {
 			text = text + "SELL:\n-----\n"
 			text = text + models.PerpetualsForHuman(ctx, sell)
 		}
+		pullback, _ := models.ReadPullbackPerpetuals(ctx)
+		if len(pullback) > 0 {
+			if text != "" {
+				text = text + "\n"
+			}
+			text = text + "Pullback:\n-------\n"
+			text = text + models.PerpetualsForHuman(ctx, pullback)
+		}
 		if text != "" {
 			msg := tgbotapi.NewMessage(configs.ChannelID, text)
 			if _, err := bot.Send(msg); err != nil {
