@@ -318,7 +318,7 @@ func Notify(ctx context.Context) string {
 		if text != "" {
 			text = text + "\n"
 		}
-		text = text + "Pullback:\n-------\n"
+		text = text + "Pullback > 15%:\n---------\n"
 		text = text + PerpetualsForHuman(ctx, pullback)
 	}
 	return text
