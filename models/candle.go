@@ -134,7 +134,7 @@ func ReadCandles(ctx context.Context, symbol string) ([]*Candle, error) {
 
 func ReadHighestCandles(ctx context.Context) (map[string]float64, error) {
 	s := session.SqliteDB(ctx)
-	query := "SELECT symbol,MAX(high) FROM candles GROUP BY symbol WHERE open_time>?"
+	query := "SELECT symbol,MAX(high) FROM candles WHERE open_time>? GROUP BY symbol"
 	rows, err := s.Query(ctx, query, time.Now().Add(time.Hour*-36).UnixMilli())
 	if err != nil {
 		return nil, err
