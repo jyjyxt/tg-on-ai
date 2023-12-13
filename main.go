@@ -88,10 +88,10 @@ func main() {
 				text = models.PerpetualsForHuman(ctx, ps)
 				if text == "" {
 					t := strings.ToUpper(text)
-					if f := filters[t]; f != nil {
+					if f := filters[t+"USDT"]; f != nil {
 						text = models.PerpetualsForHuman(ctx, []*models.Perpetual{f})
 					}
-					if f := filters["1000"+t]; f != nil {
+					if f := filters["1000"+t+"USDT"]; f != nil {
 						text = models.PerpetualsForHuman(ctx, []*models.Perpetual{f})
 					}
 				}
