@@ -37,7 +37,7 @@ func fetchCandle(ctx context.Context, p *models.Perpetual) error {
 	client := futures.NewClient("", "")
 	s := client.NewKlinesService()
 	s.Symbol(p.Symbol)
-	s.Interval("1h")
+	s.Interval("4h")
 	s.StartTime(latest.OpenTime)
 	info, err := s.Do(ctx)
 	if err != nil {

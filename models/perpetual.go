@@ -126,6 +126,12 @@ func ReadPerpetual(ctx context.Context, symbol string) (*Perpetual, error) {
 	return perpetualFromRow(row)
 }
 
+func ReadPerpetualByBase(ctx context.Context, symbol string) (*Perpetual, error) {
+	query := fmt.Sprintf("SELECT %s FROM perpetuals WHERE base_asset=? OR base_asset=?", strings.Join(perpetualCols, ","))
+	row := session.SqliteDB(ctx).QueryRow(ctx, query, symbol, "1000"+symbol)
+	return perpetualFromRow(row)
+}
+
 func ReadPerpetualCategory(ctx context.Context) ([]string, error) {
 	ps, err := ReadPerpetuals(ctx, "")
 	if err != nil {

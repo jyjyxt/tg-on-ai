@@ -49,6 +49,11 @@ func main() {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
+	filters, err := models.ReadPerpetualSet(ctx, "")
+	if err != nil {
+		panic(err)
+	}
+
 	updates := bot.GetUpdatesChan(u)
 	for update := range updates {
 		if imsg := update.ChannelPost; imsg != nil { // If we got a message
@@ -81,6 +86,15 @@ func main() {
 					return
 				}
 				text = models.PerpetualsForHuman(ctx, ps)
+				if text == "" {
+					t := strings.ToUpper(text)
+					if f := filters[t]; f != nil {
+						text = models.PerpetualsForHuman(ctx, []*models.Perpetual{f})
+					}
+					if f := filters["1000"+t]; f != nil {
+						text = models.PerpetualsForHuman(ctx, []*models.Perpetual{f})
+					}
+				}
 				if text == "" {
 					text = imsg.Text + " 🤟"
 				}
