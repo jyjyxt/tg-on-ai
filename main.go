@@ -86,7 +86,7 @@ func main() {
 					return
 				}
 				text = models.PerpetualsForHuman(ctx, ps)
-				if text == "" {
+				if len(ps) == 0 {
 					t := strings.ToUpper(cmd)
 					if f := filters[t+"USDT"]; f != nil {
 						text = models.PerpetualsForHuman(ctx, []*models.Perpetual{f})
