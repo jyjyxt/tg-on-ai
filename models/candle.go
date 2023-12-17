@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"strings"
 	"tg-on-ai/session"
 	"time"
@@ -117,7 +118,7 @@ func ReadCandlesAsAsset(ctx context.Context, symbol string) (*indicator.Asset, e
 func ReadCandles(ctx context.Context, symbol string) ([]*Candle, error) {
 	s := session.SqliteDB(ctx)
 	query := fmt.Sprintf("SELECT %s FROM candles WHERE symbol=? AND open_time>? ORDER BY symbol,open_time", strings.Join(candleCols, ","))
-	rows, err := s.Query(ctx, query, symbol, time.Now().Add(time.Hour*24*-3).UnixMilli())
+	rows, err := s.Query(ctx, query, symbol, time.Now().Add(time.Hour*24*-45).UnixMilli())
 	if err != nil {
 		return nil, err
 	}
@@ -170,9 +171,99 @@ func DeleteCandles(ctx context.Context, symbol string) error {
 	defer txn.Rollback()
 
 	query := "DELETE FROM candles WHERE symbol=? AND open_time<?"
-	_, err = txn.ExecContext(ctx, query, symbol, time.Now().Add(time.Hour*24*-30).UnixMilli())
+	_, err = txn.ExecContext(ctx, query, symbol, time.Now().Add(time.Hour*24*-45).UnixMilli())
 	if err != nil {
 		return err
 	}
 	return txn.Commit()
+}
+
+func ReadVolatility(ctx context.Context, asset *indicator.Asset) float64 {
+	var v float64
+	for i, h := range asset.High {
+		l := asset.Low[i]
+		v += ((h - l) / l)
+	}
+	v = v / float64(len(asset.High))
+	return v * 3
+}
+
+func ReadPeakAndTrough(v float64, asset *indicator.Asset) (float64, float64) {
+	ll := len(asset.Closing)
+	thr := 6
+	point := asset.Closing[ll-thr]
+
+	var isPeak = false
+	var isTrough = false
+
+	for i := range asset.Closing {
+		j := ll - thr - i
+		if j < 0 {
+			break
+		}
+
+		closing := asset.Closing[j]
+
+		if closing > point*(1+v) {
+			isPeak = true
+		}
+		if closing < point*(1-v) {
+			isTrough = true
+		}
+		if isPeak || isTrough {
+			break
+		}
+	}
+
+	var peak, trough float64
+	if isPeak {
+		for i := range asset.Closing {
+			j := ll - thr - i
+			if j < 0 {
+				break
+			}
+			closing := asset.Closing[j]
+			if trough == 0 && closing > peak {
+				peak = closing
+			}
+			if trough == 0 && closing*(1+v) < peak {
+				log.Println(1+v, closing, peak, i)
+				trough = closing
+			}
+			if trough > 0 {
+				if closing < trough {
+					trough = closing
+				}
+				if closing*(1-v) > trough {
+					break
+				}
+			}
+		}
+	}
+
+	if isTrough {
+		for i := range asset.Closing {
+			j := ll - thr - i
+			if j < 0 {
+				break
+			}
+			closing := asset.Closing[j]
+			if peak == 0 && closing < trough {
+				trough = closing
+			}
+			if peak == 0 && closing*(1+v) < peak {
+				peak = closing
+			}
+			if peak > 0 {
+				if closing < peak {
+					peak = closing
+				}
+				if closing*(1-v) < peak {
+					break
+				}
+			}
+		}
+	}
+	log.Println(isPeak, isTrough)
+	return peak, trough
 }
