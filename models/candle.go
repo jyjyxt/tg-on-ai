@@ -86,7 +86,7 @@ func LatestCandleTime(ctx context.Context, symbol string) (*Candle, error) {
 	if err != nil || c != nil {
 		return c, err
 	}
-	return &Candle{OpenTime: time.Now().Add(time.Hour * 24 * -3).UnixMilli()}, nil
+	return &Candle{OpenTime: time.Now().Add(time.Hour * 24 * -30).UnixMilli()}, nil
 }
 
 func ReadCandlesAsAsset(ctx context.Context, symbol string) (*indicator.Asset, error) {
