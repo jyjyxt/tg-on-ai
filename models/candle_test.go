@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/adshao/go-binance/v2/futures"
+	"github.com/cinar/indicator"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,7 +16,7 @@ func TestCandle(t *testing.T) {
 	ctx := setup()
 	defer os.Remove(pathTest)
 
-	symbol := "XMRUSDT"
+	symbol := "ASTRUSDT"
 	candle, err := LatestCandleTime(ctx, symbol)
 	require.Nil(err)
 	require.NotNil(candle)
@@ -54,4 +55,7 @@ func TestCandle(t *testing.T) {
 	v = v / float64(len(asset.High))
 	log.Println(v)
 	log.Println(ReadPeakAndTrough(v*5, asset))
+	tr, atr := indicator.Atr(14, asset.High, asset.Low, asset.Closing)
+	log.Println(tr)
+	log.Println(atr)
 }

@@ -13,6 +13,7 @@ const (
 	StrategyNameKDJ       = "KDJ"
 	StrategyNameAroon     = "Aroon"
 	StrategyNameWilliamsR = "WilliamsR"
+	StrategyNameATR       = "ATR"
 
 	StrategyTotal int64 = 3
 )
