@@ -329,10 +329,9 @@ func Notify(ctx context.Context) string {
 	}
 	candles, _ := ReadLastCandles(ctx)
 	if len(candles) > 0 {
-		var highAll, closeAll, highBTC, closeBTC float64
+		var highAll, highBTC, closeBTC float64
 		for _, c := range candles {
-			highAll += c.High
-			closeAll += c.Close
+			highAll += (c.Close / c.High)
 			if c.Symbol == "BTCUSDT" {
 				highBTC = c.High
 				closeBTC = c.Close
@@ -342,7 +341,7 @@ func Notify(ctx context.Context) string {
 			text = text + "\n"
 		}
 		text = text + "Ratio BTC/All:\n---------\n"
-		text = text + fmt.Sprintf("%f:%f", closeBTC/highBTC, closeAll/highAll)
+		text = text + fmt.Sprintf("%f:%f", closeBTC/highBTC, highAll/float64(len(candles)))
 	}
 	return text
 }
