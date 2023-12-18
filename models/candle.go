@@ -133,6 +133,24 @@ func ReadCandles(ctx context.Context, symbol string) ([]*Candle, error) {
 	return cs, nil
 }
 
+func ReadLastCandles(ctx context.Context) ([]*Candle, error) {
+	s := session.SqliteDB(ctx)
+	query := fmt.Sprintf("SELECT %s FROM candles WHERE open_time>?", strings.Join(candleCols, ","))
+	rows, err := s.Query(ctx, query, time.Now().Add(time.Hour*-4).UnixMilli())
+	if err != nil {
+		return nil, err
+	}
+	var cs []*Candle
+	for rows.Next() {
+		c, err := candleFromRow(rows)
+		if err != nil {
+			return nil, err
+		}
+		cs = append(cs, c)
+	}
+	return cs, nil
+}
+
 func ReadHighestCandles(ctx context.Context) (map[string]float64, error) {
 	s := session.SqliteDB(ctx)
 	query := "SELECT symbol,MAX(high) FROM candles WHERE open_time>? GROUP BY symbol"

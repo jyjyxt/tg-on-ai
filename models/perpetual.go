@@ -327,6 +327,20 @@ func Notify(ctx context.Context) string {
 		text = text + "Pullback > 15%:\n---------\n"
 		text = text + PerpetualsForHuman(ctx, pullback)
 	}
+	candles, _ := ReadLastCandles(ctx)
+	if len(candles) > 0 {
+		var highAll, closeAll, highBTC, closeBTC float64
+		for _, c := range candles {
+			highAll += c.High
+			closeAll += c.Close
+			if c.Symbol == "BTCUSDT" {
+				highBTC = c.High
+				closeBTC = c.Close
+			}
+		}
+		text = text + "Ratio BTC/All:\n---------\n"
+		text = text + fmt.Sprintf("%f:%f", closeBTC/highBTC, closeAll/highAll)
+	}
 	return text
 }
 
