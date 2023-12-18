@@ -153,6 +153,23 @@ func ReadStrategies(ctx context.Context, symbol string) ([]*Strategy, error) {
 	return ps, nil
 }
 
+func ReadATRStrategies(ctx context.Context) ([]*Strategy, error) {
+	query := fmt.Sprintf("SELECT %s FROM strategies WHERE name=? AND score_x>0 ORDER BY score_x LIMIT 5", strings.Join(strategyCols, ","))
+	rows, err := session.SqliteDB(ctx).Query(ctx, query, StrategyNameATR)
+	if err != nil {
+		return nil, err
+	}
+	var ps []*Strategy
+	for rows.Next() {
+		p, err := strategyFromRow(rows)
+		if err != nil {
+			return nil, err
+		}
+		ps = append(ps, p)
+	}
+	return ps, nil
+}
+
 func ReadStrategy(ctx context.Context, symbol, name string) (*Strategy, error) {
 	query := fmt.Sprintf("SELECT %s FROM strategies WHERE symbol=? AND name=?", strings.Join(strategyCols, ","))
 	row := session.SqliteDB(ctx).QueryRow(ctx, query, symbol, name)

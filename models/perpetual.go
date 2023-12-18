@@ -199,6 +199,10 @@ func ReadBestPerpetuals(ctx context.Context, action string) ([]*Perpetual, error
 	if len(symbols) == 0 {
 		return nil, nil
 	}
+	return ReadPerpetualsBySymbols(ctx, symbols)
+}
+
+func ReadPerpetualsBySymbols(ctx context.Context, symbols []string) ([]*Perpetual, error) {
 	query := fmt.Sprintf("SELECT %s FROM perpetuals WHERE symbol IN ('%s') ORDER BY open_interest_value DESC LIMIT 5", strings.Join(perpetualCols, ","), strings.Join(symbols, "','"))
 	return findPerpetuals(ctx, query)
 }
@@ -326,6 +330,19 @@ func Notify(ctx context.Context) string {
 		}
 		text = text + "Pullback > 15%:\n---------\n"
 		text = text + PerpetualsForHuman(ctx, pullback)
+	}
+	ss, _ := ReadATRStrategies(ctx)
+	if len(ss) > 0 {
+		if text != "" {
+			text = text + "\n"
+		}
+		var symbols []string
+		for _, s := range ss {
+			symbols = append(symbols, s.Symbol)
+		}
+		ps, _ := ReadPerpetualsBySymbols(ctx, symbols)
+		text = text + "ATR:\n---------\n"
+		text = text + PerpetualsForHuman(ctx, ps)
 	}
 	candles, _ := ReadLastCandles(ctx)
 	if len(candles) > 0 {
