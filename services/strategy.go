@@ -71,7 +71,7 @@ func fetchStrategy(ctx context.Context, p *models.Perpetual) error {
 	}
 	{
 		_, atr := indicator.Atr(14, asset.High, asset.Low, asset.Closing)
-		if len(atr) == 0 {
+		if len(atr) < 14 {
 			return nil
 		}
 		l := len(atr)
