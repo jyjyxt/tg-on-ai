@@ -338,6 +338,9 @@ func Notify(ctx context.Context) string {
 				closeBTC = c.Close
 			}
 		}
+		if text != "" {
+			text = text + "\n"
+		}
 		text = text + "Ratio BTC/All:\n---------\n"
 		text = text + fmt.Sprintf("%f:%f", closeBTC/highBTC, closeAll/highAll)
 	}
