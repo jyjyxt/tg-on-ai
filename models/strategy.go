@@ -166,7 +166,7 @@ func ReadATRStrategies(ctx context.Context) ([]*Strategy, error) {
 }
 
 func ReadWeekStrategies(ctx context.Context, week string) ([]*Strategy, error) {
-	query := fmt.Sprintf("SELECT %s FROM strategies WHERE name=? AND score_x>0.95 ORDER BY score_y LIMIT 5", strings.Join(strategyCols, ","))
+	query := fmt.Sprintf("SELECT %s FROM strategies WHERE name=? AND score_x>0.95 AND score_x<1 ORDER BY score_y LIMIT 5", strings.Join(strategyCols, ","))
 	return readStrategiesQuery(ctx, query, week)
 }
 
