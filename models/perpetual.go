@@ -295,7 +295,7 @@ func DeletePerpetual(ctx context.Context, symbol string) error {
 
 func Notify(ctx context.Context) string {
 	var text string
-	weekFour, _ := ReadWeekStrategies(ctx, StrategyNameWeekFour)
+	weekFour, _ := ReadWeekStrategies(ctx, StrategyNameWeekFour, 0)
 	if len(weekFour) > 0 {
 		if text != "" {
 			text = text + "\n"
@@ -309,7 +309,7 @@ func Notify(ctx context.Context) string {
 		text = text + PerpetualsForHuman(ctx, ps)
 	}
 
-	weekTwo, _ := ReadWeekStrategies(ctx, StrategyNameWeekTwo)
+	weekTwo, _ := ReadWeekStrategies(ctx, StrategyNameWeekTwo, 0)
 	if len(weekTwo) > 0 {
 		if text != "" {
 			text = text + "\n"
@@ -323,7 +323,7 @@ func Notify(ctx context.Context) string {
 		text = text + PerpetualsForHuman(ctx, ps)
 	}
 
-	week, _ := ReadWeekStrategies(ctx, StrategyNameWeek)
+	week, _ := ReadWeekStrategies(ctx, StrategyNameWeek, 0)
 	if len(week) > 0 {
 		if text != "" {
 			text = text + "\n"

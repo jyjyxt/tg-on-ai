@@ -72,6 +72,14 @@ func main() {
 					return
 				}
 				text = models.PerpetualsForHuman(ctx, ps)
+			case "week":
+				week, _ := models.ReadWeekStrategies(ctx, models.StrategyNameWeek, 10)
+				var symbols []string
+				for _, s := range week {
+					symbols = append(symbols, s.Symbol)
+				}
+				ps, _ := models.ReadPerpetualsBySymbols(ctx, symbols)
+				text = models.PerpetualsForHuman(ctx, ps)
 			case "buy", "sell":
 				ps, err := models.ReadBestPerpetuals(ctx, cmd)
 				if err != nil {
