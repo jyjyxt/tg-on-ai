@@ -14,6 +14,9 @@ const (
 	StrategyNameAroon     = "Aroon"
 	StrategyNameWilliamsR = "WilliamsR"
 	StrategyNameATR       = "ATR"
+	StrategyNameWeek      = "Week"
+	StrategyNameWeekTwo   = "WeekTwo"
+	StrategyNameWeekFour  = "WeekFour"
 
 	StrategyTotal int64 = 3
 )
@@ -54,6 +57,10 @@ func (s *Strategy) Result() string {
 		return fmt.Sprintf("%s:%.2f", s.Name, s.ScoreX)
 	case StrategyNameATR:
 		return fmt.Sprintf("%s:%.2f", s.Name, s.ScoreX)
+	case StrategyNameWeek:
+		return fmt.Sprintf("%s:%.2f:%.2f", s.Name, s.ScoreX, s.ScoreY)
+	case StrategyNameWeekTwo:
+		return fmt.Sprintf("%s:%.2f:%.2f", s.Name, s.ScoreX, s.ScoreY)
 	}
 	return ""
 }
@@ -155,7 +162,22 @@ func ReadStrategies(ctx context.Context, symbol string) ([]*Strategy, error) {
 
 func ReadATRStrategies(ctx context.Context) ([]*Strategy, error) {
 	query := fmt.Sprintf("SELECT %s FROM strategies WHERE name=? AND score_x>0 ORDER BY score_x LIMIT 5", strings.Join(strategyCols, ","))
-	rows, err := session.SqliteDB(ctx).Query(ctx, query, StrategyNameATR)
+	return readStrategiesQuery(ctx, query, StrategyNameATR)
+}
+
+func ReadWeekStrategies(ctx context.Context, week string) ([]*Strategy, error) {
+	query := fmt.Sprintf("SELECT %s FROM strategies WHERE name=? AND score_x>0.95 ORDER BY score_y DESC LIMIT 5", strings.Join(strategyCols, ","))
+	return readStrategiesQuery(ctx, query, week)
+}
+
+func ReadStrategy(ctx context.Context, symbol, name string) (*Strategy, error) {
+	query := fmt.Sprintf("SELECT %s FROM strategies WHERE symbol=? AND name=?", strings.Join(strategyCols, ","))
+	row := session.SqliteDB(ctx).QueryRow(ctx, query, symbol, name)
+	return strategyFromRow(row)
+}
+
+func readStrategiesQuery(ctx context.Context, query string, args ...any) ([]*Strategy, error) {
+	rows, err := session.SqliteDB(ctx).Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -168,10 +190,4 @@ func ReadATRStrategies(ctx context.Context) ([]*Strategy, error) {
 		ps = append(ps, p)
 	}
 	return ps, nil
-}
-
-func ReadStrategy(ctx context.Context, symbol, name string) (*Strategy, error) {
-	query := fmt.Sprintf("SELECT %s FROM strategies WHERE symbol=? AND name=?", strings.Join(strategyCols, ","))
-	row := session.SqliteDB(ctx).QueryRow(ctx, query, symbol, name)
-	return strategyFromRow(row)
 }

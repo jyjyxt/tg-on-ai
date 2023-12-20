@@ -85,5 +85,38 @@ func fetchStrategy(ctx context.Context, p *models.Perpetual) error {
 			return err
 		}
 	}
+	// week
+	{
+		offset := 42
+		if l := len(asset.Closing); l > offset {
+			closings := asset.Closing[l-offset : l-4]
+			sort.Float64s(closings)
+			min := closings[0]
+			max := closings[len(closings)-1]
+			_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameWeek, 0, p.MarkPrice/max, min/max, asset.Date[l-1].Unix())
+		}
+	}
+	// two week
+	{
+		offset := 84
+		if l := len(asset.Closing); l > offset {
+			closings := asset.Closing[l-offset : l-4]
+			sort.Float64s(closings)
+			min := closings[0]
+			max := closings[len(closings)-1]
+			_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameWeekTwo, 0, p.MarkPrice/max, min/max, asset.Date[l-1].Unix())
+		}
+	}
+	// four week
+	{
+		offset := 168
+		if l := len(asset.Closing); l > offset {
+			closings := asset.Closing[l-offset : l-4]
+			sort.Float64s(closings)
+			min := closings[0]
+			max := closings[len(closings)-1]
+			_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameWeekFour, 0, p.MarkPrice/max, min/max, asset.Date[l-1].Unix())
+		}
+	}
 	return nil
 }

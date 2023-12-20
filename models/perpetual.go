@@ -294,43 +294,49 @@ func DeletePerpetual(ctx context.Context, symbol string) error {
 }
 
 func Notify(ctx context.Context) string {
-	ps, _ := ReadDiscretePerpetuals(ctx, "high")
 	var text string
-	if len(ps) > 0 {
-		text = "Ratio HIGH:\n----------\n" + PerpetualsForHuman(ctx, ps)
-	}
-	ps, _ = ReadDiscretePerpetuals(ctx, "low")
-	if len(ps) > 0 {
+	weekFour, _ := ReadWeekStrategies(ctx, StrategyNameWeek)
+	if len(weekFour) > 0 {
 		if text != "" {
 			text = text + "\n"
 		}
-		text = text + "Ratio LOW:\n----------\n"
+		var symbols []string
+		for _, s := range weekFour {
+			symbols = append(symbols, s.Symbol)
+		}
+		ps, _ := ReadPerpetualsBySymbols(ctx, symbols)
+		text = text + "Week Four:\n---------\n"
 		text = text + PerpetualsForHuman(ctx, ps)
 	}
-	buy, _ := ReadBestPerpetuals(ctx, "buy")
-	if len(buy) > 0 {
+
+	weekTwo, _ := ReadWeekStrategies(ctx, StrategyNameWeek)
+	if len(weekTwo) > 0 {
 		if text != "" {
 			text = text + "\n"
 		}
-		text = text + "BUY:\n----\n"
-		text = text + PerpetualsForHuman(ctx, buy)
+		var symbols []string
+		for _, s := range weekTwo {
+			symbols = append(symbols, s.Symbol)
+		}
+		ps, _ := ReadPerpetualsBySymbols(ctx, symbols)
+		text = text + "Week Two:\n---------\n"
+		text = text + PerpetualsForHuman(ctx, ps)
 	}
-	sell, _ := ReadBestPerpetuals(ctx, "sell")
-	if len(sell) > 0 {
+
+	week, _ := ReadWeekStrategies(ctx, StrategyNameWeek)
+	if len(week) > 0 {
 		if text != "" {
 			text = text + "\n"
 		}
-		text = text + "SELL:\n-----\n"
-		text = text + PerpetualsForHuman(ctx, sell)
-	}
-	pullback, _ := ReadPullbackPerpetuals(ctx)
-	if len(pullback) > 0 {
-		if text != "" {
-			text = text + "\n"
+		var symbols []string
+		for _, s := range week {
+			symbols = append(symbols, s.Symbol)
 		}
-		text = text + "Pullback > 15%:\n---------\n"
-		text = text + PerpetualsForHuman(ctx, pullback)
+		ps, _ := ReadPerpetualsBySymbols(ctx, symbols)
+		text = text + "Week:\n---------\n"
+		text = text + PerpetualsForHuman(ctx, ps)
 	}
+
 	ss, _ := ReadATRStrategies(ctx)
 	if len(ss) > 0 {
 		if text != "" {
