@@ -203,7 +203,7 @@ func ReadBestPerpetuals(ctx context.Context, action string) ([]*Perpetual, error
 }
 
 func ReadPerpetualsBySymbols(ctx context.Context, symbols []string) ([]*Perpetual, error) {
-	query := fmt.Sprintf("SELECT %s FROM perpetuals WHERE symbol IN ('%s') ORDER BY open_interest_value DESC LIMIT 5", strings.Join(perpetualCols, ","), strings.Join(symbols, "','"))
+	query := fmt.Sprintf("SELECT %s FROM perpetuals WHERE symbol IN ('%s') ORDER BY open_interest_value DESC LIMIT 64", strings.Join(perpetualCols, ","), strings.Join(symbols, "','"))
 	return findPerpetuals(ctx, query)
 }
 
