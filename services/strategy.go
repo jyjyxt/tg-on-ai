@@ -89,7 +89,7 @@ func fetchStrategy(ctx context.Context, p *models.Perpetual) error {
 	{
 		offset := 42
 		if l := len(asset.Closing); l > offset {
-			closings := asset.Closing[l-offset : l-4]
+			closings := asset.Closing[l-offset : l-(offset/3)]
 			sort.Float64s(closings)
 			min := closings[0]
 			max := closings[len(closings)-1]
@@ -100,7 +100,7 @@ func fetchStrategy(ctx context.Context, p *models.Perpetual) error {
 	{
 		offset := 84
 		if l := len(asset.Closing); l > offset {
-			closings := asset.Closing[l-offset : l-4]
+			closings := asset.Closing[l-offset : l-(offset/3)]
 			sort.Float64s(closings)
 			min := closings[0]
 			max := closings[len(closings)-1]
@@ -111,7 +111,7 @@ func fetchStrategy(ctx context.Context, p *models.Perpetual) error {
 	{
 		offset := 168
 		if l := len(asset.Closing); l > offset {
-			closings := asset.Closing[l-offset : l-4]
+			closings := asset.Closing[l-offset : l-(offset/3)]
 			sort.Float64s(closings)
 			min := closings[0]
 			max := closings[len(closings)-1]
