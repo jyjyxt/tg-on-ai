@@ -80,7 +80,7 @@ func fetchStrategy(ctx context.Context, p *models.Perpetual) error {
 		sort.Slice(r, func(i, j int) bool { return r[i] > r[j] })
 		max := r[0]
 		min := r[len(r)-1]
-		_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameATR, 0, (now-min)/(max-min), 0, asset.Date[l-1].Unix())
+		_, err = models.CreateStrategy(ctx, p.Symbol, models.StrategyNameATR, 0, (now-min)/(max-min), now, asset.Date[l-1].Unix())
 		if err != nil {
 			return err
 		}

@@ -56,7 +56,7 @@ func (s *Strategy) Result() string {
 	case StrategyNameWilliamsR:
 		return fmt.Sprintf("%s:%.2f", s.Name, s.ScoreX)
 	case StrategyNameATR:
-		return fmt.Sprintf("%s:%.2f", s.Name, s.ScoreX)
+		return fmt.Sprintf("%s:%.2f:%.2f", s.Name, s.ScoreX, s.ScoreY)
 	case StrategyNameWeek:
 		return fmt.Sprintf("%s:%.2f:%.2f", s.Name, s.ScoreX, s.ScoreY)
 	case StrategyNameWeekTwo:
