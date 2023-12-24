@@ -22,7 +22,7 @@ func LoopingTGNotify(ctx context.Context, bot *tgbotapi.BotAPI) {
 			}
 		}
 
-		log.Println("LoopingTGNotify executed at", time.Now())
 		time.Sleep(time.Minute * 30)
+		log.Println("LoopingTGNotify executed at", time.Now())
 	}
 }
