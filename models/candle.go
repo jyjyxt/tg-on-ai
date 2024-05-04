@@ -189,7 +189,7 @@ func DeleteCandles(ctx context.Context, symbol string) error {
 	defer txn.Rollback()
 
 	query := "DELETE FROM candles WHERE symbol=? AND open_time<?"
-	_, err = txn.ExecContext(ctx, query, symbol, time.Now().Add(time.Hour*24*-45).UnixMilli())
+	_, err = txn.ExecContext(ctx, query, symbol, time.Now().Add(time.Hour*24*-365).UnixMilli())
 	if err != nil {
 		return err
 	}
