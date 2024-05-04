@@ -118,7 +118,7 @@ func ReadCandlesAsAsset(ctx context.Context, symbol string) (*indicator.Asset, e
 func ReadCandles(ctx context.Context, symbol string) ([]*Candle, error) {
 	s := session.SqliteDB(ctx)
 	query := fmt.Sprintf("SELECT %s FROM candles WHERE symbol=? AND open_time>? ORDER BY symbol,open_time", strings.Join(candleCols, ","))
-	rows, err := s.Query(ctx, query, symbol, time.Now().Add(time.Hour*24*-45).UnixMilli())
+	rows, err := s.Query(ctx, query, symbol, time.Now().Add(time.Hour*24*-90).UnixMilli())
 	if err != nil {
 		return nil, err
 	}
