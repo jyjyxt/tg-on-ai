@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"tg-on-ai/configs"
 	"tg-on-ai/middlewares"
+	"tg-on-ai/routes"
 	"tg-on-ai/services"
 	"tg-on-ai/session"
 
@@ -39,9 +40,10 @@ func main() {
 	go startBot(ctx, bot)
 
 	mux := http.NewServeMux()
+	routes.RegisterRoutes(mux)
 	handler := middlewares.Constraint(mux)
 	handler = middlewares.Context(handler, store, render.New())
 	handler = middlewares.Stats(handler)
 
-	http.ListenAndServe("localhost:8090", mux)
+	http.ListenAndServe("localhost:8090", handler)
 }
