@@ -36,6 +36,11 @@ func BadRequestError(ctx context.Context) *Error {
 	return createError(ctx, http.StatusAccepted, http.StatusBadRequest, description, nil)
 }
 
+func ServerError(ctx context.Context, err error) *Error {
+	description := http.StatusText(http.StatusInternalServerError)
+	return createError(ctx, http.StatusInternalServerError, http.StatusInternalServerError, description, err)
+}
+
 func NotFoundError(ctx context.Context) *Error {
 	description := "The endpoint is not found."
 	return createError(ctx, http.StatusAccepted, http.StatusNotFound, description, nil)
