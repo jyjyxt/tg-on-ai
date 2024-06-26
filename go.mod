@@ -1,4 +1,4 @@
-module tg-on-ai
+module tg.ai
 
 go 1.22.2
 

@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"strings"
-	"tg-on-ai/models"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"tg.ai/internel/models"
 )
 
 func startBot(ctx context.Context, bot *tgbotapi.BotAPI) {

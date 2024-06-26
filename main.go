@@ -4,14 +4,14 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"tg-on-ai/configs"
-	"tg-on-ai/middlewares"
-	"tg-on-ai/routes"
-	"tg-on-ai/services"
-	"tg-on-ai/session"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/unrolled/render"
+	"tg.ai/internel/configs"
+	"tg.ai/internel/middlewares"
+	"tg.ai/internel/routes"
+	"tg.ai/internel/services"
+	"tg.ai/internel/session"
 )
 
 func main() {
@@ -45,5 +45,6 @@ func main() {
 	handler = middlewares.Context(handler, store, render.New())
 	handler = middlewares.Stats(handler)
 
+	log.Println("localhost:8090")
 	http.ListenAndServe("localhost:8090", handler)
 }
