@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from 'next-themes'
 import "./globals.css";
 
+import SideBar from "@/components/sidebar";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -18,7 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider attribute="class">{children}</ThemeProvider>
+        <ThemeProvider attribute="class">
+          <SideBar />
+          <div className="p-4 sm:ml-64">
+            {children}
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
