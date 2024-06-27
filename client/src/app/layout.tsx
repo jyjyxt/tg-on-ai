@@ -1,3 +1,4 @@
+import Script from 'next/script';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from 'next-themes'
@@ -26,6 +27,10 @@ export default function RootLayout({
             {children}
           </div>
         </ThemeProvider>
+        <Script
+          src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"
+          defer
+        />
       </body>
     </html>
   );
