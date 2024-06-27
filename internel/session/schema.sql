@@ -9,14 +9,23 @@ CREATE TABLE IF NOT EXISTS perpetuals (
   open_interest_value    REAL NOT NULL,
   updated_at             INTEGER NOT NULL,
 
-  day3_up                REAL NOT NULL,
-  day3_down              REAL NOT NULL,
-
   PRIMARY KEY(symbol)
 );
 
 CREATE INDEX IF NOT EXISTS perpetuals_funding_rate ON perpetuals(last_funding_rate);
 CREATE INDEX IF NOT EXISTS perpetuals_value ON perpetuals(open_interest_value);
+
+
+CREATE TABLE IF NOT EXISTS trends (
+  symbol                 TEXT NOT NULL,
+  category               TEXT NOT NULL,
+  value                  REAL NOT NULL,
+  updated_at             TIMESTAMP NOT NULL,
+
+  PRIMARY KEY(symbol, category)
+);
+
+CREATE INDEX IF NOT EXISTS trends_category_value ON trends(category, value);
 
 
 CREATE TABLE IF NOT EXISTS candles (

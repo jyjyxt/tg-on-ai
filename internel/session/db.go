@@ -54,6 +54,32 @@ func (s *SQLite3Store) Unlock() {
 	s.mutex.Unlock()
 }
 
+func (s *SQLite3Store) RunInTransaction(ctx context.Context, fn func(context.Context, *sql.Tx) error) error {
+	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if err := fn(ctx, tx); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
+func (s *SQLite3Store) RunInTransactionRead(ctx context.Context, fn func(context.Context, *sql.Tx) error) error {
+	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelReadUncommitted})
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if err := fn(ctx, tx); err != nil {
+		return err
+	}
+	return tx.Rollback()
+}
+
 func (s *SQLite3Store) BeginTx(ctx context.Context) (*sql.Tx, error) {
 	return s.db.BeginTx(ctx, nil)
 }
