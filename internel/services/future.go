@@ -12,6 +12,7 @@ import (
 func LoopingExchangeInfo(ctx context.Context) {
 	log.Println("LoopingExchangeInfo starting")
 	for {
+		time.Sleep(time.Minute * 5)
 		err := fetchExchangeInfo(ctx)
 		if err != nil {
 			log.Printf("fetchExchangeInfo() => %#v", err)
@@ -19,7 +20,6 @@ func LoopingExchangeInfo(ctx context.Context) {
 			continue
 		}
 		log.Println("LoopingExchangeInfo executed at", time.Now())
-		time.Sleep(time.Second * 30)
 	}
 }
 
@@ -48,7 +48,7 @@ func fetchExchangeInfo(ctx context.Context) error {
 			delete(filter, s.Symbol)
 			continue
 		}
-		_, err = models.CreatePerpetual(ctx, s.Symbol, s.BaseAsset, s.QuoteAsset, models.PerpetualSourceBinance, s.UnderlyingSubType)
+		_, err = models.CreatePerpetual(ctx, &s)
 		if err != nil {
 			return err
 		}
@@ -65,6 +65,7 @@ func fetchExchangeInfo(ctx context.Context) error {
 func LoopingPremiumIndex(ctx context.Context) {
 	log.Println("LoopingPremiumIndex starting")
 	for {
+		time.Sleep(time.Minute)
 		err := fetchPremiumIndex(ctx)
 		if err != nil {
 			log.Printf("fetchPremiumIndex() => %#v", err)
@@ -72,7 +73,6 @@ func LoopingPremiumIndex(ctx context.Context) {
 			continue
 		}
 		log.Println("LoopingPremiumIndex executed at", time.Now())
-		time.Sleep(time.Minute)
 	}
 }
 

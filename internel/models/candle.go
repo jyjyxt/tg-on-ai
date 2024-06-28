@@ -4,10 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
+	"github.com/adshao/go-binance/v2/futures"
 	"github.com/cinar/indicator"
 	"github.com/shopspring/decimal"
 	"tg.ai/internel/session"
@@ -39,16 +39,16 @@ func candleFromRow(row session.Row) (*Candle, error) {
 	return &c, err
 }
 
-func CreateCandle(ctx context.Context, symbol, open, high, low, close, volume string, openTime, closeTime int64) (*Candle, error) {
+func UpsertCandle(ctx context.Context, symbol string, line *futures.Kline) (*Candle, error) {
 	c := &Candle{
 		Symbol:    symbol,
-		Open:      decimal.RequireFromString(open).InexactFloat64(),
-		High:      decimal.RequireFromString(high).InexactFloat64(),
-		Low:       decimal.RequireFromString(low).InexactFloat64(),
-		Close:     decimal.RequireFromString(close).InexactFloat64(),
-		Volume:    decimal.RequireFromString(volume).InexactFloat64(),
-		OpenTime:  openTime,
-		CloseTime: closeTime,
+		Open:      decimal.RequireFromString(line.Open).InexactFloat64(),
+		High:      decimal.RequireFromString(line.High).InexactFloat64(),
+		Low:       decimal.RequireFromString(line.Low).InexactFloat64(),
+		Close:     decimal.RequireFromString(line.Close).InexactFloat64(),
+		Volume:    decimal.RequireFromString(line.Volume).InexactFloat64(),
+		OpenTime:  line.OpenTime,
+		CloseTime: line.CloseTime,
 	}
 	old, err := ReadCandle(ctx, c.Symbol, c.OpenTime)
 	if err != nil {
@@ -204,84 +204,4 @@ func ReadVolatility(ctx context.Context, asset *indicator.Asset) float64 {
 	}
 	v = v / float64(len(asset.High))
 	return v * 3
-}
-
-func ReadPeakAndTrough(v float64, asset *indicator.Asset) (float64, float64) {
-	ll := len(asset.Closing)
-	thr := 6
-	point := asset.Closing[ll-thr]
-
-	var isPeak = false
-	var isTrough = false
-
-	for i := range asset.Closing {
-		j := ll - thr - i
-		if j < 0 {
-			break
-		}
-
-		closing := asset.Closing[j]
-
-		if closing > point*(1+v) {
-			isPeak = true
-		}
-		if closing < point*(1-v) {
-			isTrough = true
-		}
-		if isPeak || isTrough {
-			break
-		}
-	}
-
-	var peak, trough float64
-	if isPeak {
-		for i := range asset.Closing {
-			j := ll - thr - i
-			if j < 0 {
-				break
-			}
-			closing := asset.Closing[j]
-			if trough == 0 && closing > peak {
-				peak = closing
-			}
-			if trough == 0 && closing*(1+v) < peak {
-				log.Println(1+v, closing, peak, i)
-				trough = closing
-			}
-			if trough > 0 {
-				if closing < trough {
-					trough = closing
-				}
-				if closing*(1-v) > trough {
-					break
-				}
-			}
-		}
-	}
-
-	if isTrough {
-		for i := range asset.Closing {
-			j := ll - thr - i
-			if j < 0 {
-				break
-			}
-			closing := asset.Closing[j]
-			if peak == 0 && closing < trough {
-				trough = closing
-			}
-			if peak == 0 && closing*(1+v) < peak {
-				peak = closing
-			}
-			if peak > 0 {
-				if closing < peak {
-					peak = closing
-				}
-				if closing*(1-v) < peak {
-					break
-				}
-			}
-		}
-	}
-	log.Println(isPeak, isTrough)
-	return peak, trough
 }

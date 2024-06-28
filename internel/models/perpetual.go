@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/adshao/go-binance/v2/futures"
 	"github.com/shopspring/decimal"
 	"golang.org/x/exp/maps"
 	"tg.ai/internel/session"
@@ -57,7 +58,7 @@ func (p *Perpetual) GetSumOpenInterestValue() string {
 	return decimal.NewFromFloat(p.SumOpenInterestValue).Div(decimal.New(1, 6)).RoundFloor(2).String()
 }
 
-func CreatePerpetual(ctx context.Context, symbol, base, quote, source string, categories []string) (*Perpetual, error) {
+func CreatePerpetual(ctx context.Context, sym *futures.Symbol) (*Perpetual, error) {
 	s := session.SqliteDB(ctx)
 	s.Lock()
 	defer s.Unlock()
@@ -69,11 +70,11 @@ func CreatePerpetual(ctx context.Context, symbol, base, quote, source string, ca
 	defer txn.Rollback()
 
 	p := &Perpetual{
-		Symbol:     symbol,
-		BaseAsset:  base,
-		QuoteAsset: quote,
-		Categories: strings.ToLower(strings.Join(categories, ",")),
-		Source:     source,
+		Symbol:     sym.Symbol,
+		BaseAsset:  sym.BaseAsset,
+		QuoteAsset: sym.QuoteAsset,
+		Categories: strings.ToLower(strings.Join(sym.UnderlyingSubType, ",")),
+		Source:     PerpetualSourceBinance,
 	}
 	query := session.BuildInsertionSQL("perpetuals", perpetualCols)
 	_, err = txn.ExecContext(ctx, query, p.values()...)
