@@ -3,10 +3,10 @@ package services
 import (
 	"context"
 	"log"
-	"tg-on-ai/models"
 	"time"
 
 	"github.com/adshao/go-binance/v2/futures"
+	"tg.ai/internel/models"
 )
 
 func LoopingExchangeInfo(ctx context.Context) {

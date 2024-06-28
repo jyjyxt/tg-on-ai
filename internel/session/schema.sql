@@ -16,6 +16,20 @@ CREATE INDEX IF NOT EXISTS perpetuals_funding_rate ON perpetuals(last_funding_ra
 CREATE INDEX IF NOT EXISTS perpetuals_value ON perpetuals(open_interest_value);
 
 
+CREATE TABLE IF NOT EXISTS trends (
+  symbol                 TEXT NOT NULL,
+  category               TEXT NOT NULL,
+  high                   REAL NOT NULL,
+  low                    REAL NOT NULL,
+  value                  REAL NOT NULL,
+  updated_at             TIMESTAMP NOT NULL,
+
+  PRIMARY KEY(symbol, category)
+);
+
+CREATE INDEX IF NOT EXISTS trends_category_value ON trends(category, value);
+
+
 CREATE TABLE IF NOT EXISTS candles (
   symbol                 TEXT NOT NULL,
   open                   REAL    NOT NULL, -- 开盘价

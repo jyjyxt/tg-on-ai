@@ -5,7 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"tg-on-ai/session"
+
+	"tg.ai/internel/session"
 )
 
 const (

@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"log"
 	"strings"
-	"tg-on-ai/session"
 	"time"
 
 	"github.com/cinar/indicator"
 	"github.com/shopspring/decimal"
+	"tg.ai/internel/session"
 )
 
 type Candle struct {

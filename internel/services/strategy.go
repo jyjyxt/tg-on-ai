@@ -4,10 +4,10 @@ import (
 	"context"
 	"log"
 	"sort"
-	"tg-on-ai/models"
 	"time"
 
 	"github.com/cinar/indicator"
+	"tg.ai/internel/models"
 )
 
 func LoopingStrategy(ctx context.Context) {

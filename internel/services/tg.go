@@ -3,11 +3,11 @@ package services
 import (
 	"context"
 	"log"
-	"tg-on-ai/configs"
-	"tg-on-ai/models"
 	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"tg.ai/internel/configs"
+	"tg.ai/internel/models"
 )
 
 func LoopingTGNotify(ctx context.Context, bot *tgbotapi.BotAPI) {

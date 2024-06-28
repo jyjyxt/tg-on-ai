@@ -7,10 +7,10 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"tg-on-ai/session"
 
 	"github.com/shopspring/decimal"
 	"golang.org/x/exp/maps"
+	"tg.ai/internel/session"
 )
 
 const (

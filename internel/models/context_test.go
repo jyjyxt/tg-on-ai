@@ -2,10 +2,19 @@ package models
 
 import (
 	"context"
-	"tg-on-ai/session"
+	"os"
+
+	"tg.ai/internel/session"
 )
 
 const pathTest = "/tmp/test.sqlite3"
+
+func teardownTest(ctx context.Context) {
+	err := os.Remove(pathTest)
+	if err != nil {
+		panic(err)
+	}
+}
 
 func setup() context.Context {
 	store, _ := session.OpenDataSQLite3Store(pathTest)
