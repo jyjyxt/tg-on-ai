@@ -2,7 +2,8 @@ package models
 
 import (
 	"context"
-	"tg-on-ai/session"
+
+	"tg.ai/internel/session"
 )
 
 const pathTest = "/tmp/test.sqlite3"

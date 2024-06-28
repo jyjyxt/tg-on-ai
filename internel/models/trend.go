@@ -13,26 +13,28 @@ import (
 type Trend struct {
 	Symbol    string
 	Category  string
+	High      float64
+	Low       float64
 	Value     float64
 	UpdatedAt time.Time
 }
 
-var trendsColumns = []string{"symbol", "category", "value", "updated_at"}
+var trendsColumns = []string{"symbol", "category", "high", "low", "value", "updated_at"}
 
 func (t *Trend) values() []any {
-	return []any{t.Symbol, t.Category, t.Value, t.UpdatedAt}
+	return []any{t.Symbol, t.Category, t.High, t.Low, t.Value, t.UpdatedAt}
 }
 
 func trendFromRow(row session.Row) (*Trend, error) {
 	var t Trend
-	err := row.Scan(&t.Symbol, &t.Category, &t.Value, &t.UpdatedAt)
+	err := row.Scan(&t.Symbol, &t.Category, &t.High, &t.Low, &t.Value, &t.UpdatedAt)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 	return &t, err
 }
 
-func UpsertTrend(ctx context.Context, symbol, category string, v float64) (*Trend, error) {
+func UpsertTrend(ctx context.Context, symbol, category string, h, l, v float64) (*Trend, error) {
 	old, err := FindTrend(ctx, symbol, category)
 	if err != nil {
 		return nil, err
@@ -40,6 +42,8 @@ func UpsertTrend(ctx context.Context, symbol, category string, v float64) (*Tren
 	t := &Trend{
 		Symbol:    symbol,
 		Category:  category,
+		High:      h,
+		Low:       l,
 		Value:     v,
 		UpdatedAt: time.Now(),
 	}
@@ -49,7 +53,7 @@ func UpsertTrend(ctx context.Context, symbol, category string, v float64) (*Tren
 			_, err := tx.ExecContext(ctx, query, t.values()...)
 			return err
 		}
-		_, err = tx.ExecContext(ctx, "UPDATE trends SET value=?, updated_at=? WHERE symbol=? AND category=?", t.Value, t.UpdatedAt, t.Symbol, t.Category)
+		_, err = tx.ExecContext(ctx, "UPDATE trends SET high=?, low=?, value=?, updated_at=? WHERE symbol=? AND category=?", t.High, t.Low, t.Value, t.UpdatedAt, t.Symbol, t.Category)
 		return nil
 	})
 	return t, err

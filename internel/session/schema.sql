@@ -19,6 +19,8 @@ CREATE INDEX IF NOT EXISTS perpetuals_value ON perpetuals(open_interest_value);
 CREATE TABLE IF NOT EXISTS trends (
   symbol                 TEXT NOT NULL,
   category               TEXT NOT NULL,
+  high                   REAL NOT NULL,
+  low                    REAL NOT NULL,
   value                  REAL NOT NULL,
   updated_at             TIMESTAMP NOT NULL,
 
