@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/dimfeld/httptreemux/v5"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/unrolled/render"
 	"tg.ai/internel/configs"
@@ -39,9 +40,9 @@ func main() {
 	go services.LoopingTGNotify(ctx, bot)
 	go startBot(ctx, bot)
 
-	mux := http.NewServeMux()
-	routes.RegisterRoutes(mux)
-	handler := middlewares.Constraint(mux)
+	router := httptreemux.New()
+	routes.RegisterRoutes(router)
+	handler := middlewares.Constraint(router)
 	handler = middlewares.Context(handler, store, render.New())
 	handler = middlewares.Stats(handler)
 

@@ -81,8 +81,8 @@ func findTrend(ctx context.Context, tx *sql.Tx, query string, args ...any) (*Tre
 func FindTrendSet(ctx context.Context, category string) (map[string]*Trend, error) {
 	var trends []*Trend
 	err := session.SqliteDB(ctx).RunInTransaction(ctx, func(ctx context.Context, tx *sql.Tx) error {
-		query := fmt.Sprintf("SELECT %s FROM trends WHERE category=?", strings.Join(trendsColumns, ","))
-		old, err := findRecentTrends(ctx, tx, query, category)
+		query := fmt.Sprintf("SELECT %s FROM trends WHERE category=? LIMIT 1000", strings.Join(trendsColumns, ","))
+		old, err := findTrends(ctx, tx, query, category)
 		if err != nil {
 			return err
 		}
@@ -99,7 +99,7 @@ func FindTrendSet(ctx context.Context, category string) (map[string]*Trend, erro
 	return filter, nil
 }
 
-func findRecentTrends(ctx context.Context, tx *sql.Tx, query string, args ...any) ([]*Trend, error) {
+func findTrends(ctx context.Context, tx *sql.Tx, query string, args ...any) ([]*Trend, error) {
 	rows, err := tx.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, err
