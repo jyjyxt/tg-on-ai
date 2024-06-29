@@ -28,7 +28,6 @@ func TestTrend(t *testing.T) {
 	require.NotNil(old)
 	require.Equal(high, old.High)
 	require.Equal(low, old.Low)
-	require.Equal(up, old.Up)
 
 	trend, err = UpsertTrend(ctx, sym, category, high, low, up, down)
 	require.Nil(err)
@@ -39,7 +38,6 @@ func TestTrend(t *testing.T) {
 	require.NotNil(old)
 	require.Equal(high, old.High)
 	require.Equal(low, old.Low)
-	require.Equal(1.2, old.Up)
 
 	filter, err := FindTrendSet(ctx, category)
 	require.Nil(err)

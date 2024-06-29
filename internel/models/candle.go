@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
+	"math"
 	"strings"
 	"time"
 
@@ -196,6 +198,61 @@ func DeleteCandles(ctx context.Context, symbol string) error {
 	return txn.Commit()
 }
 
+func HandleCandles(ctx context.Context, symbol string) error {
+	candles, err := ReadCandles(ctx, symbol)
+	if err != nil {
+		return err
+	}
+	if len(candles) < 3 {
+		return nil
+	}
+	var high, low, now float64
+	var path int64
+	low = math.MaxFloat64
+	for i, c := range candles {
+		if i == 0 {
+			now = c.Close
+			continue
+		}
+		if i == 1 {
+			path = c.getPath()
+		}
+		if path != 0 {
+			if c.getPath() != path {
+				_, err = UpsertTrend(ctx, symbol, TrendDaysPath, high, low, now, float64(i))
+				if err != nil {
+					log.Printf("UpsertTrend(%s) %v", TrendDaysPath, err)
+				}
+				path = 0
+			}
+		}
+		if high < c.High {
+			high = c.High
+		}
+		if low > c.Low {
+			low = c.Low
+		}
+		switch i {
+		case 3, 7, 15, 30:
+			days := TrendDays3
+			if i == 7 {
+				days = TrendDays7
+			}
+			if i == 15 {
+				days = TrendDays15
+			}
+			if i == 30 {
+				days = TrendDays30
+			}
+			_, err = UpsertTrend(ctx, symbol, days, high, low, now, 0)
+			if err != nil {
+				log.Printf("UpsertTrend(%s) %v", TrendDaysPath, err)
+			}
+		}
+	}
+	return nil
+}
+
 func ReadVolatility(ctx context.Context, asset *indicator.Asset) float64 {
 	var v float64
 	for i, h := range asset.High {
@@ -204,4 +261,11 @@ func ReadVolatility(ctx context.Context, asset *indicator.Asset) float64 {
 	}
 	v = v / float64(len(asset.High))
 	return v * 3
+}
+
+func (c *Candle) getPath() int64 {
+	if c.Close > c.Open {
+		return 1
+	}
+	return -1
 }

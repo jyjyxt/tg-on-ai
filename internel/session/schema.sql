@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS trends (
   category               TEXT NOT NULL,
   high                   REAL NOT NULL,
   low                    REAL NOT NULL,
+  now                    REAL NOT NULL,
   up                     REAL NOT NULL,
   down                   REAL NOT NULL,
   updated_at             TIMESTAMP NOT NULL,

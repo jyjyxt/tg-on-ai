@@ -23,27 +23,28 @@ type Trend struct {
 	Category  string
 	High      float64
 	Low       float64
+	Now       float64
 	Up        float64
 	Down      float64
 	UpdatedAt time.Time
 }
 
-var trendsColumns = []string{"symbol", "category", "high", "low", "up", "down", "updated_at"}
+var trendsColumns = []string{"symbol", "category", "high", "low", "now", "up", "down", "updated_at"}
 
 func (t *Trend) values() []any {
-	return []any{t.Symbol, t.Category, t.High, t.Low, t.Up, t.Down, t.UpdatedAt}
+	return []any{t.Symbol, t.Category, t.High, t.Low, t.Now, t.Up, t.Down, t.UpdatedAt}
 }
 
 func trendFromRow(row session.Row) (*Trend, error) {
 	var t Trend
-	err := row.Scan(&t.Symbol, &t.Category, &t.High, &t.Low, &t.Up, &t.Down, &t.UpdatedAt)
+	err := row.Scan(&t.Symbol, &t.Category, &t.High, &t.Low, &t.Now, &t.Up, &t.Down, &t.UpdatedAt)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 	return &t, err
 }
 
-func UpsertTrend(ctx context.Context, symbol, category string, h, l, up, down float64) (*Trend, error) {
+func UpsertTrend(ctx context.Context, symbol, category string, h, l, now, up float64) (*Trend, error) {
 	old, err := FindTrend(ctx, symbol, category)
 	if err != nil {
 		return nil, err
@@ -53,9 +54,13 @@ func UpsertTrend(ctx context.Context, symbol, category string, h, l, up, down fl
 		Category:  category,
 		High:      h,
 		Low:       l,
+		Now:       now,
 		Up:        up,
-		Down:      down,
 		UpdatedAt: time.Now(),
+	}
+	if category != TrendDaysPath {
+		t.Up = now/l - 1
+		t.Down = 1 - now/h
 	}
 	err = session.SqliteDB(ctx).RunInTransaction(ctx, func(ctx context.Context, tx *sql.Tx) error {
 		if old == nil {

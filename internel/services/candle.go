@@ -51,5 +51,10 @@ func fetchCandle(ctx context.Context, p *models.Perpetual) error {
 			return err
 		}
 	}
+
+	err = models.HandleCandles(ctx, p.Symbol)
+	if err != nil {
+		return err
+	}
 	return models.DeleteCandles(ctx, p.Symbol)
 }

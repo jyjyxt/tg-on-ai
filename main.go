@@ -23,11 +23,7 @@ func main() {
 	ctx := context.Background()
 	ctx = session.WithSqliteDB(ctx, store)
 
-	go services.LoopingExchangeInfo(ctx)
-	go services.LoopingPremiumIndex(ctx)
-	go services.LoopingOpenInterestHist(ctx)
-	go services.LoopingCandle(ctx)
-	go services.LoopingStrategy(ctx)
+	go services.Root(ctx)
 	// token := "6337999999:AAFimM8x_invalidetokenforexample"
 	bot, err := tgbotapi.NewBotAPI(configs.Token)
 	if err != nil {
