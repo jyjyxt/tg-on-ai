@@ -21,13 +21,15 @@ CREATE TABLE IF NOT EXISTS trends (
   category               TEXT NOT NULL,
   high                   REAL NOT NULL,
   low                    REAL NOT NULL,
-  value                  REAL NOT NULL,
+  up                     REAL NOT NULL,
+  down                   REAL NOT NULL,
   updated_at             TIMESTAMP NOT NULL,
 
   PRIMARY KEY(symbol, category)
 );
 
-CREATE INDEX IF NOT EXISTS trends_category_value ON trends(category, value);
+CREATE INDEX IF NOT EXISTS trends_category_up ON trends(category, up);
+CREATE INDEX IF NOT EXISTS trends_category_down ON trends(category, down);
 
 
 CREATE TABLE IF NOT EXISTS candles (

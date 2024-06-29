@@ -16,9 +16,10 @@ func TestTrend(t *testing.T) {
 	category := "day3up"
 	high := 1.23
 	low := 1.1
-	v := 1.2
+	up := 1.2
+	down := 1.3
 
-	trend, err := UpsertTrend(ctx, sym, category, high, low, v)
+	trend, err := UpsertTrend(ctx, sym, category, high, low, up, down)
 	require.Nil(err)
 	require.NotNil(trend)
 
@@ -27,9 +28,9 @@ func TestTrend(t *testing.T) {
 	require.NotNil(old)
 	require.Equal(high, old.High)
 	require.Equal(low, old.Low)
-	require.Equal(v, old.Value)
+	require.Equal(up, old.Up)
 
-	trend, err = UpsertTrend(ctx, sym, category, high, low, 1.34)
+	trend, err = UpsertTrend(ctx, sym, category, high, low, up, down)
 	require.Nil(err)
 	require.NotNil(trend)
 
@@ -38,7 +39,7 @@ func TestTrend(t *testing.T) {
 	require.NotNil(old)
 	require.Equal(high, old.High)
 	require.Equal(low, old.Low)
-	require.Equal(1.34, old.Value)
+	require.Equal(1.2, old.Up)
 
 	filter, err := FindTrendSet(ctx, category)
 	require.Nil(err)

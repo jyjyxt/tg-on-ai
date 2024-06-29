@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"sort"
 	"strconv"
 	"strings"
 
@@ -206,30 +205,6 @@ func ReadBestPerpetuals(ctx context.Context, action string) ([]*Perpetual, error
 func ReadPerpetualsBySymbols(ctx context.Context, symbols []string) ([]*Perpetual, error) {
 	query := fmt.Sprintf("SELECT %s FROM perpetuals WHERE symbol IN ('%s') ORDER BY open_interest_value DESC LIMIT 64", strings.Join(perpetualCols, ","), strings.Join(symbols, "','"))
 	return findPerpetuals(ctx, query)
-}
-
-func ReadPullbackPerpetuals(ctx context.Context) ([]*Perpetual, error) {
-	perpetuals, err := ReadPerpetuals(ctx, "")
-	if err != nil {
-		return nil, err
-	}
-	candles, err := ReadHighestCandles(ctx)
-	if err != nil {
-		return nil, err
-	}
-	var filters []*Perpetual
-	for _, p := range perpetuals {
-		if pric := candles[p.Symbol]; pric > 0 {
-			if p.MarkPrice/pric < 0.85 {
-				filters = append(filters, p)
-			}
-		}
-	}
-	sort.Slice(filters, func(i, j int) bool { return filters[i].SumOpenInterestValue > filters[j].SumOpenInterestValue })
-	if len(filters) > 3 {
-		return filters[:3], nil
-	}
-	return filters, nil
 }
 
 func ReadLowPerpetuals(ctx context.Context) ([]*Perpetual, error) {

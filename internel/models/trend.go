@@ -10,31 +10,40 @@ import (
 	"tg.ai/internel/session"
 )
 
+const (
+	TrendDaysPath = "dayspath"
+	TrendDays3    = "days3"
+	TrendDays7    = "days7"
+	TrendDays15   = "days15"
+	TrendDays30   = "days30"
+)
+
 type Trend struct {
 	Symbol    string
 	Category  string
 	High      float64
 	Low       float64
-	Value     float64
+	Up        float64
+	Down      float64
 	UpdatedAt time.Time
 }
 
-var trendsColumns = []string{"symbol", "category", "high", "low", "value", "updated_at"}
+var trendsColumns = []string{"symbol", "category", "high", "low", "up", "down", "updated_at"}
 
 func (t *Trend) values() []any {
-	return []any{t.Symbol, t.Category, t.High, t.Low, t.Value, t.UpdatedAt}
+	return []any{t.Symbol, t.Category, t.High, t.Low, t.Up, t.Down, t.UpdatedAt}
 }
 
 func trendFromRow(row session.Row) (*Trend, error) {
 	var t Trend
-	err := row.Scan(&t.Symbol, &t.Category, &t.High, &t.Low, &t.Value, &t.UpdatedAt)
+	err := row.Scan(&t.Symbol, &t.Category, &t.High, &t.Low, &t.Up, &t.Down, &t.UpdatedAt)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 	return &t, err
 }
 
-func UpsertTrend(ctx context.Context, symbol, category string, h, l, v float64) (*Trend, error) {
+func UpsertTrend(ctx context.Context, symbol, category string, h, l, up, down float64) (*Trend, error) {
 	old, err := FindTrend(ctx, symbol, category)
 	if err != nil {
 		return nil, err
@@ -44,7 +53,8 @@ func UpsertTrend(ctx context.Context, symbol, category string, h, l, v float64) 
 		Category:  category,
 		High:      h,
 		Low:       l,
-		Value:     v,
+		Up:        up,
+		Down:      down,
 		UpdatedAt: time.Now(),
 	}
 	err = session.SqliteDB(ctx).RunInTransaction(ctx, func(ctx context.Context, tx *sql.Tx) error {
@@ -53,7 +63,7 @@ func UpsertTrend(ctx context.Context, symbol, category string, h, l, v float64) 
 			_, err := tx.ExecContext(ctx, query, t.values()...)
 			return err
 		}
-		_, err = tx.ExecContext(ctx, "UPDATE trends SET high=?, low=?, value=?, updated_at=? WHERE symbol=? AND category=?", t.High, t.Low, t.Value, t.UpdatedAt, t.Symbol, t.Category)
+		_, err = tx.ExecContext(ctx, "UPDATE trends SET high=?, low=?, up=?, down=?, updated_at=? WHERE symbol=? AND category=?", t.High, t.Low, t.Up, t.Down, t.UpdatedAt, t.Symbol, t.Category)
 		return nil
 	})
 	return t, err

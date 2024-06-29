@@ -30,7 +30,7 @@ func testCandle(t *testing.T) {
 	info, err := s.Do(ctx)
 	require.Nil(err)
 	for _, in := range info {
-		candle, err = CreateCandle(ctx, symbol, in.Open, in.High, in.Low, in.Close, in.Volume, in.OpenTime, in.CloseTime)
+		candle, err = UpsertCandle(ctx, symbol, in)
 		require.Nil(err)
 		require.NotNil(candle)
 	}
@@ -54,7 +54,6 @@ func testCandle(t *testing.T) {
 	}
 	v = v / float64(len(asset.High))
 	log.Println(v)
-	log.Println(ReadPeakAndTrough(v*5, asset))
 	tr, atr := indicator.Atr(14, asset.High, asset.Low, asset.Closing)
 	log.Println(tr)
 	log.Println(atr)
