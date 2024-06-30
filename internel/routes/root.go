@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/dimfeld/httptreemux/v5"
+	"tg.ai/internel/models"
 	"tg.ai/internel/session"
 	"tg.ai/internel/views"
 )
@@ -14,7 +15,12 @@ func RegisterRoutes(router *httptreemux.TreeMux) {
 }
 
 func perpetuals(w http.ResponseWriter, r *http.Request, _ map[string]string) {
-	views.RenderDataResponse(w, r, map[string]any{"source": "perpetuals"})
+	perpetuals, err := models.ReadPerpetuals(r.Context(), "")
+	if err != nil {
+		views.RenderErrorResponse(w, r, err)
+	} else {
+		views.RenderDataResponse(w, r, views.RenderPerpetuals(perpetuals))
+	}
 }
 
 func root(w http.ResponseWriter, r *http.Request, _ map[string]string) {
