@@ -220,7 +220,7 @@ func HandleCandles(ctx context.Context, symbol string) error {
 		if low > c.Low {
 			low = c.Low
 		}
-		if path != 0 && c.getPath() != path {
+		if path != 0 && i > 1 && c.getPath() != path {
 			_, err = UpsertTrend(ctx, symbol, TrendDaysPath, high, low, now, float64((i-1)*path))
 			if err != nil {
 				log.Printf("UpsertTrend(%s) %v", TrendDaysPath, err)
