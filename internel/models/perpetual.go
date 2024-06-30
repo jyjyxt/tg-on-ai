@@ -230,6 +230,22 @@ func ReadPerpetualSet(ctx context.Context, source string) (map[string]*Perpetual
 	return filter, nil
 }
 
+func ReadPerpetualsFull(ctx context.Context) ([]*Perpetual, error) {
+	query := fmt.Sprintf("SELECT %s FROM perpetuals", strings.Join(perpetualCols, ","))
+	s, err := findPerpetuals(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	filter, err := FindTrendSet(ctx, TrendDays3)
+	if err != nil {
+		return nil, err
+	}
+	for _, k := range s {
+		k.Trend = filter[k.Symbol]
+	}
+	return s, nil
+}
+
 func ReadPerpetuals(ctx context.Context, source string) ([]*Perpetual, error) {
 	query := fmt.Sprintf("SELECT %s FROM perpetuals", strings.Join(perpetualCols, ","))
 	return findPerpetuals(ctx, query)
