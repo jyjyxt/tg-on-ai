@@ -15,7 +15,7 @@ func RegisterRoutes(router *httptreemux.TreeMux) {
 }
 
 func perpetuals(w http.ResponseWriter, r *http.Request, _ map[string]string) {
-	perpetuals, err := models.ReadPerpetualsFull(r.Context())
+	perpetuals, err := models.ReadPerpetualsFull(r.Context(), r.URL.Query().Get("trend"))
 	if err != nil {
 		views.RenderErrorResponse(w, r, err)
 	} else {
