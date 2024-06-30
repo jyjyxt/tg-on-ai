@@ -1,6 +1,10 @@
 package views
 
-import "tg.ai/internel/models"
+import (
+	"math"
+
+	"tg.ai/internel/models"
+)
 
 type Trend struct {
 	Symbol string
@@ -17,8 +21,8 @@ func buildTrend(a *models.Trend) *Trend {
 		High:   a.High,
 		Low:    a.Low,
 		Now:    a.Now,
-		Up:     a.Up,
-		Down:   a.Down,
+		Up:     math.Floor(a.Up*10000) / 100,
+		Down:   math.Floor(a.Down*10000) / 100,
 	}
 	return &b
 }
