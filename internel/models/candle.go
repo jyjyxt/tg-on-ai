@@ -214,18 +214,18 @@ func HandleCandles(ctx context.Context, symbol string) error {
 			now = c.Close
 			continue
 		}
-		if path != 0 && c.getPath() != path {
-			_, err = UpsertTrend(ctx, symbol, TrendDaysPath, high, low, now, float64(i))
-			if err != nil {
-				log.Printf("UpsertTrend(%s) %v", TrendDaysPath, err)
-			}
-			path = 0
-		}
 		if high < c.High {
 			high = c.High
 		}
 		if low > c.Low {
 			low = c.Low
+		}
+		if path != 0 && c.getPath() != path {
+			_, err = UpsertTrend(ctx, symbol, TrendDaysPath, high, low, now, float64(i*path))
+			if err != nil {
+				log.Printf("UpsertTrend(%s) %v", TrendDaysPath, err)
+			}
+			path = 0
 		}
 		switch i {
 		case 3, 7, 15, 30:
@@ -258,7 +258,7 @@ func ReadVolatility(ctx context.Context, asset *indicator.Asset) float64 {
 	return v * 3
 }
 
-func (c *Candle) getPath() int64 {
+func (c *Candle) getPath() int {
 	if c.Close > c.Open {
 		return 1
 	}
