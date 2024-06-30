@@ -36,6 +36,8 @@ type Perpetual struct {
 	// FundingRateCap       string
 	// FundingRateFloor     string
 	// fundingIntervalHours int64
+
+	Trend *Trend
 }
 
 var perpetualCols = []string{"symbol", "base_asset", "quote_asset", "categories", "source", "mark_price", "last_funding_rate", "open_interest_value", "updated_at"}

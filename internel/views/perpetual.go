@@ -14,6 +14,8 @@ type Perpetual struct {
 	SumOpenInterestValue float64 `json:"sum_open_interest_value"`
 
 	UpdatedAt int64 `json:"updated_at"`
+
+	Trend *Trend `json:"trend"`
 }
 
 func buildPerpetual(a *models.Perpetual) *Perpetual {
@@ -27,6 +29,9 @@ func buildPerpetual(a *models.Perpetual) *Perpetual {
 		LastFundingRate:      a.LastFundingRate,
 		SumOpenInterestValue: a.SumOpenInterestValue,
 		UpdatedAt:            a.UpdatedAt,
+	}
+	if a.Trend != nil {
+		b.Trend = buildTrend(a.Trend)
 	}
 	return &b
 }
