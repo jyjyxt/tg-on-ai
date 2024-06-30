@@ -24,6 +24,7 @@ func LoopingCandle(ctx context.Context) {
 			if err != nil {
 				log.Printf("fetchCandle(%s) => %#v", p.Symbol, err)
 			}
+			time.Sleep(time.Second)
 		}
 	}
 }
