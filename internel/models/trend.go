@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"math"
 	"strings"
 	"time"
 
@@ -131,4 +132,15 @@ func findTrends(ctx context.Context, tx *sql.Tx, query string, args ...any) ([]*
 		ts = append(ts, t)
 	}
 	return ts, nil
+}
+
+func (t *Trend) GetUp() float64 {
+	if t.Category == TrendDaysPath {
+		return t.Up
+	}
+	return math.Floor(t.Up*10000) / 100
+}
+
+func (t *Trend) GetDown() float64 {
+	return math.Floor(t.Down*10000) / 100
 }

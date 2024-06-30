@@ -1,8 +1,6 @@
 package views
 
 import (
-	"math"
-
 	"tg.ai/internel/models"
 )
 
@@ -21,8 +19,8 @@ func buildTrend(a *models.Trend) *Trend {
 		High:   a.High,
 		Low:    a.Low,
 		Now:    a.Now,
-		Up:     math.Floor(a.Up*10000) / 100,
-		Down:   math.Floor(a.Down*10000) / 100,
+		Up:     a.GetUp(),
+		Down:   a.GetDown(),
 	}
 	return &b
 }
