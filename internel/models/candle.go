@@ -206,14 +206,11 @@ func HandleCandles(ctx context.Context, symbol string) error {
 	if len(candles) < 3 {
 		return nil
 	}
-	var high, low, now float64
+	var high, low float64
+	now := candles[0].Close
 	path := candles[1].getPath()
 	low = math.MaxFloat64
 	for i, c := range candles {
-		if i == 0 {
-			now = c.Close
-			continue
-		}
 		if high < c.High {
 			high = c.High
 		}
