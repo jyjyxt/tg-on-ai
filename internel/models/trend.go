@@ -60,8 +60,8 @@ func UpsertTrend(ctx context.Context, symbol, category string, h, l, now, up flo
 		UpdatedAt: time.Now(),
 	}
 	if category != TrendDaysPath {
-		t.Up = now/l - 1
-		t.Down = 1 - now/h
+		t.Up = t.Now/t.Low - 1
+		t.Down = 1 - t.Now/t.High
 	}
 	err = session.SqliteDB(ctx).RunInTransaction(ctx, func(ctx context.Context, tx *sql.Tx) error {
 		if old == nil {
