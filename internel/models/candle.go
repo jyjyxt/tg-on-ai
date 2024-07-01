@@ -211,6 +211,9 @@ func HandleCandles(ctx context.Context, symbol string) error {
 	path := candles[1].getPath()
 	low = math.MaxFloat64
 	for i, c := range candles {
+		if i == 0 {
+			continue
+		}
 		if high < c.High {
 			high = c.High
 		}
@@ -238,7 +241,7 @@ func HandleCandles(ctx context.Context, symbol string) error {
 			}
 			_, err = UpsertTrend(ctx, symbol, days, high, low, now, 0)
 			if err != nil {
-				log.Printf("UpsertTrend(%s) %v", TrendDaysPath, err)
+				log.Printf("UpsertTrend(%s) %v", days, err)
 			}
 		}
 	}
