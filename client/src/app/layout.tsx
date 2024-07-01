@@ -1,4 +1,3 @@
-import Script from 'next/script';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from 'next-themes'
@@ -22,15 +21,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ThemeProvider attribute="class">
-          <SideBar />
-          <div className="p-4 sm:ml-64">
-            {children}
-          </div>
+          {children}
         </ThemeProvider>
-        <Script
-          src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"
-          defer
-        />
       </body>
     </html>
   );

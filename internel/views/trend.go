@@ -5,12 +5,12 @@ import (
 )
 
 type Trend struct {
-	Symbol string
-	High   float64
-	Low    float64
-	Now    float64
-	Up     float64
-	Down   float64
+	Symbol string  `json:"symbol"`
+	High   float64 `json:"high"`
+	Low    float64 `json:"low"`
+	Now    float64 `json:"now"`
+	Up     float64 `json:"up"`
+	Down   float64 `json:"down"`
 }
 
 func buildTrend(a *models.Trend) *Trend {
