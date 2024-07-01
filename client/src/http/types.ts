@@ -1,3 +1,12 @@
+export interface Trend {
+  symbol: string;
+  high: number;
+  low: number;
+  now: number;
+  up: number;
+  down: number;
+}
+
 export interface Perpetual {
   symbol: string;
   base_asset: string;
@@ -12,13 +21,4 @@ export interface Perpetual {
   updated_at: number;
 
   trend?: Trend;
-}
-
-export interface Trend {
-  symbol: string;
-  high: number;
-  low: number;
-  now: number;
-  up: number;
-  down: number;
 }

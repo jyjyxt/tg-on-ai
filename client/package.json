@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "bignumber.js": "^9.1.2",
     "flowbite": "^2.3.0",
     "flowbite-react": "^0.10.1",
     "next": "14.2.4",
