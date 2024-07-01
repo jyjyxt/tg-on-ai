@@ -20,7 +20,8 @@ const Index = ({ p }: prop) => {
     <Card className="w-96 flex-grow">
       <div className="flex items-center justify-between">
         <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-          <span className="text-green-600 dark:text-green-300">{t.up}%</span> / <span className="text-red-600 dark:text-red-300">{t.down * -1}%</span>
+          { t.down && <><span className="text-green-600 dark:text-green-300">{t.up}%</span> / <span className="text-red-600 dark:text-red-300">{t.down * -1}%</span></> }
+          { !t.down && <span className={t.up > 0 ? 'text-green-600 dark:text-green-300' : 'text-red-600 dark:text-red-300'}>{t.up} Days</span> }
         </h5>
         <span> {p.symbol} </span>
       </div>

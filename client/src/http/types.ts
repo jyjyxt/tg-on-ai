@@ -4,7 +4,7 @@ export interface Trend {
   low: number;
   now: number;
   up: number;
-  down: number;
+  down?: number;
 }
 
 export interface Perpetual {
