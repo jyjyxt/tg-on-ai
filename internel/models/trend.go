@@ -69,7 +69,7 @@ func UpsertTrend(ctx context.Context, symbol, category string, h, l, now, up flo
 			_, err := tx.ExecContext(ctx, query, t.values()...)
 			return err
 		}
-		_, err = tx.ExecContext(ctx, "UPDATE trends SET high=?, low=?, up=?, down=?, updated_at=? WHERE symbol=? AND category=?", t.High, t.Low, t.Up, t.Down, t.UpdatedAt, t.Symbol, t.Category)
+		_, err = tx.ExecContext(ctx, "UPDATE trends SET high=?, low=?, now=?, up=?, down=?, updated_at=? WHERE symbol=? AND category=?", t.High, t.Low, t.Now, t.Up, t.Down, t.UpdatedAt, t.Symbol, t.Category)
 		return nil
 	})
 	return t, err
