@@ -5,15 +5,31 @@ import { initClient } from '@/http/request'
 import Perp from '@/components/Perpetual'
 import Switcher from '@/components/Switcher'
 
-const Index = async () => {
+const lowUp = (a: Perpetual, b: Perpetual) => b.trend!.up - a.trend!.up
+const lowDown = (a: Perpetual, b: Perpetual) => a.trend!.up - b.trend!.up
+const highUp = (a: Perpetual, b: Perpetual) => b.trend!.down - a.trend!.down
+const highDown = (a: Perpetual, b: Perpetual) => a.trend!.down - b.trend!.down
+
+const Index = async ({ params }: { params: { slug: string } }) => {
   const client = initClient()
-  const s: Perpetual[] = await client.perpetuals('days30');
-  const up = (a: Perpetual, b: Perpetual) => b.trend!.up - a.trend!.up
-  const perps = s.filter((p: Perpetual) => p.trend != null).sort(up)
+
+  const arr = params.slug.split('-')
+
+  const s: Perpetual[] = await client.perpetuals(arr[0]);
+  let sort = lowUp
+  if (params.slug.includes('low-down')) {
+    sort = lowDown
+  } else if (params.slug.includes('high-up')) {
+    sort = highUp
+  } else if (params.slug.includes('high-down')) {
+    sort = highDown
+  }
+  const perps = s.filter((p: Perpetual) => p.trend != null).sort(sort)
 
   return (
     <main className="p-2">
       <Switcher />
+      <div> {params.slug} </div>
       <div>
         <Button.Group outline>
           <Button gradientDuoTone="cyanToBlue">

@@ -5,12 +5,12 @@ import (
 )
 
 type Trend struct {
-	Symbol string  `json:"symbol"`
-	High   float64 `json:"high"`
-	Low    float64 `json:"low"`
-	Now    float64 `json:"now"`
-	Up     float64 `json:"up"`
-	Down   float64 `json:"down"`
+	Symbol string   `json:"symbol"`
+	High   float64  `json:"high"`
+	Low    float64  `json:"low"`
+	Now    float64  `json:"now"`
+	Up     float64  `json:"up"`
+	Down   *float64 `json:"down"`
 }
 
 func buildTrend(a *models.Trend) *Trend {
@@ -20,7 +20,10 @@ func buildTrend(a *models.Trend) *Trend {
 		Low:    a.Low,
 		Now:    a.Now,
 		Up:     a.GetUp(),
-		Down:   a.GetDown(),
+	}
+	if a.Category != models.TrendDaysPath {
+		d := a.GetDown()
+		b.Down = &d
 	}
 	return &b
 }

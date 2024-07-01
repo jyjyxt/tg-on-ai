@@ -47,6 +47,9 @@ const Index = ({ p }: prop) => {
           </div>
           <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">${formatNumber(Math.floor(p.sum_open_interest_value))}</div>
         </List.Item>
+        <List.Item className="sm:py-1 flex">
+          {(new Date(p.updated_at)).toLocaleString("en-GB")}
+        </List.Item>
       </List>
     </Card>
   )
