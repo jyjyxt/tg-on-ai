@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "bignumber.js": "^9.1.2",
+    "dayjs": "^1.11.11",
     "flowbite": "^2.3.0",
     "flowbite-react": "^0.10.1",
     "next": "14.2.4",

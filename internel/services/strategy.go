@@ -13,6 +13,7 @@ import (
 func LoopingStrategy(ctx context.Context) {
 	log.Println("LoopingStrategy starting")
 	for {
+		time.Sleep(time.Second * 30)
 		ps, err := models.ReadPerpetuals(ctx, "")
 		if err != nil {
 			log.Printf("ReadPerpetuals() => %#v", err)
@@ -26,7 +27,6 @@ func LoopingStrategy(ctx context.Context) {
 			}
 			time.Sleep(time.Second)
 		}
-		time.Sleep(time.Second * 30)
 	}
 }
 

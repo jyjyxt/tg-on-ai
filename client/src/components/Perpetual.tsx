@@ -2,6 +2,7 @@ import { Card, List } from "flowbite-react";
 import BigNumber from 'bignumber.js'
 import { Perpetual, Trend } from '@/http/types';
 import { formatNumber } from '@/utils/number';
+import { formatDateFromNow } from '@/utils/date'
 
 interface prop {
   p: Perpetual
@@ -19,11 +20,11 @@ const Index = ({ p }: prop) => {
   return (
     <Card className="w-80 flex-grow">
       <div className="flex items-center justify-between">
-        <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+        <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
           { t.down && <><span className="text-green-600 dark:text-green-300">{t.up}%</span> / <span className="text-red-600 dark:text-red-300">{t.down * -1}%</span></> }
           { !t.down && <span className={t.up > 0 ? 'text-green-600 dark:text-green-300' : 'text-red-600 dark:text-red-300'}>{t.up} Days</span> }
         </h5>
-        <span> {p.symbol} </span>
+        <span className="text-sm"> {p.symbol} </span>
       </div>
       <List unstyled className="w-full">
         { fields && fields.map((f) => {
@@ -48,8 +49,8 @@ const Index = ({ p }: prop) => {
           </div>
           <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">${formatNumber(Math.floor(p.sum_open_interest_value))}</div>
         </List.Item>
-        <List.Item className="sm:py-1 flex">
-          {(new Date(p.updated_at)).toLocaleString("en-GB")}
+        <List.Item className="sm:py-1 flex text-sm">
+          {formatDateFromNow(new Date(p.updated_at))}
         </List.Item>
       </List>
     </Card>

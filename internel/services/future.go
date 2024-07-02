@@ -12,7 +12,7 @@ import (
 func LoopingExchangeInfo(ctx context.Context) {
 	log.Println("LoopingExchangeInfo starting")
 	for {
-		time.Sleep(time.Minute * 5)
+		time.Sleep(time.Minute * 10)
 		err := fetchExchangeInfo(ctx)
 		if err != nil {
 			log.Printf("fetchExchangeInfo() => %#v", err)
