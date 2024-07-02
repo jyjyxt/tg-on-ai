@@ -13,7 +13,7 @@ const periods: Period[][] = [
   [
     {
       name: 'Days',
-      link: 'days-low-up',
+      link: 'dayspath-low-up',
       color: 'info',
     },
     {
