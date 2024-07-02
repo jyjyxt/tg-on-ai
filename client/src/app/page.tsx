@@ -8,7 +8,7 @@ import Header from '@/components/Header'
 
 const Index = async () => {
   const client = initClient()
-  const s: Perpetual[] = await client.perpetuals('days30');
+  const s: Perpetual[] = await client.perpetuals('days3');
   const up = (a: Perpetual, b: Perpetual) => b.trend!.up - a.trend!.up
   const perps = s.filter((p: Perpetual) => p.trend != null).sort(up)
 
