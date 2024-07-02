@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Button } from "flowbite-react";
 import { LiaArrowCircleDownSolid, LiaArrowCircleUpSolid } from "react-icons/lia";
+import Switcher from '@/components/Switcher'
 
 interface Period {
   name: string;
@@ -77,7 +78,7 @@ const Index = ({ slug }: Props) => {
         })}
       </div>
       <div className="mb-4">
-        <Button.Group>
+        <Button.Group className="mr-4">
           <Button as={Link} href={`/trends/${slug.replaceAll('down', 'up')}`} color="gray">
             <LiaArrowCircleUpSolid className="mr-3 h-5 w-5" /> UP
           </Button>
@@ -85,6 +86,7 @@ const Index = ({ slug }: Props) => {
             <LiaArrowCircleDownSolid className="mr-3 h-5 w-5" /> Down
           </Button>
         </Button.Group>
+        <Switcher />
       </div>
     </>
   )
