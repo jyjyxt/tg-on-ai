@@ -4,6 +4,7 @@ import { Perpetual } from '@/http/types'
 import { initClient } from '@/http/request'
 import Perp from '@/components/Perpetual'
 import Switcher from '@/components/Switcher'
+import Header from '@/components/Header'
 
 const Index = async () => {
   const client = initClient()
@@ -13,19 +14,7 @@ const Index = async () => {
 
   return (
     <main className="p-2">
-      <Switcher />
-      <div>
-        <Button.Group outline>
-          <Button gradientDuoTone="cyanToBlue">
-            <HiUserCircle className="mr-3 h-4 w-4" />
-            UP
-          </Button>
-          <Button gradientDuoTone="cyanToBlue">
-            <HiAdjustments className="mr-3 h-4 w-4" />
-            Down
-          </Button>
-        </Button.Group>
-      </div>
+      <Header slug="days3-low-up" />
       <div className="flex flex-wrap gap-2">
         {perps && perps.map((p: Perpetual) => {
           return <Perp key={p.symbol} p={p} />
