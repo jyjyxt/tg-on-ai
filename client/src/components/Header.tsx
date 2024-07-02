@@ -12,6 +12,18 @@ interface Period {
 const periods: Period[][] = [
   [
     {
+      name: 'Days',
+      link: 'days-low-up',
+      color: 'info',
+    },
+    {
+      name: 'Rate',
+      link: 'days3-rate-up',
+      color: 'info',
+    }
+  ],
+  [
+    {
       name: '3DaysLow',
       link: 'days3-low-up',
       color: 'blue',
@@ -68,7 +80,6 @@ const Index = ({ slug }: Props) => {
   return (
     <>
       <div className="flex flex-wrap gap-2 mb-4">
-        <Button as={Link} href="/trends/dayspath-low-up">Days</Button>
         { periods.map((p, i) => {
           return <Button.Group key={i}>
             {p.map((pp) => {

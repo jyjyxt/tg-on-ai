@@ -7,6 +7,8 @@ const lowUp = (a: Perpetual, b: Perpetual) => b.trend!.up - a.trend!.up
 const lowDown = (a: Perpetual, b: Perpetual) => a.trend!.up - b.trend!.up
 const highUp = (a: Perpetual, b: Perpetual) => b.trend!.down! - a.trend!.down!
 const highDown = (a: Perpetual, b: Perpetual) => a.trend!.down! - b.trend!.down!
+const rateUp = (a: Perpetual, b: Perpetual) => b.last_funding_rate - a.last_funding_rate
+const rateDown = (a: Perpetual, b: Perpetual) => a.last_funding_rate - b.last_funding_rate
 
 const Index = async ({ params }: { params: { slug: string } }) => {
   const client = initClient()
@@ -21,6 +23,10 @@ const Index = async ({ params }: { params: { slug: string } }) => {
     sort = highUp
   } else if (params.slug.includes('high-down')) {
     sort = highDown
+  } else if (params.slug.includes('rate-up')) {
+    sort = rateUp
+  } else if (params.slug.includes('rate-down')) {
+    sort = rateDown
   }
   const perps = s.filter((p: Perpetual) => p.trend != null).sort(sort)
 
