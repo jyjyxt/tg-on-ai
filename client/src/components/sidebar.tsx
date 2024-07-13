@@ -1,38 +1,127 @@
 "use client";
 
+import React, { useEffect, useRef, useState } from "react";
+import Link from 'next/link';
+import { usePathname } from "next/navigation";
 import { Sidebar } from "flowbite-react";
 import { HiArrowSmRight, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiUser, HiViewBoards } from "react-icons/hi";
 
-export default function Index() {
+interface Props {
+  sidebarOpen: boolean;
+  setSidebarOpen: (arg: boolean) => void;
+}
+
+export default function Index({ sidebarOpen, setSidebarOpen }: Props) {
+  const sidebar = useRef<any>(null);
+  const pathname = usePathname();
+
+  // close on click outside
+  useEffect(() => {
+    const clickHandler = ({ target }: MouseEvent) => {
+      if (!sidebar.current) return;
+      if (
+        !sidebarOpen ||
+        sidebar.current.contains(target)
+      )
+        return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener("click", clickHandler);
+    return () => document.removeEventListener("click", clickHandler);
+  });
+
+  // close if the esc key is pressed
+  useEffect(() => {
+    const keyHandler = ({ key }: KeyboardEvent) => {
+      if (!sidebarOpen || key !== "Escape") return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener("keydown", keyHandler);
+    return () => document.removeEventListener("keydown", keyHandler);
+  });
+
   return (
-    <aside id="default-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+    <aside ref={sidebar} className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} sm:translate-x-0`} aria-label="Sidebar">
       <Sidebar>
         <Sidebar.Items>
-          <Sidebar.ItemGroup>
-            <Sidebar.Item href="#" icon={HiChartPie}>
-              Dashboard
-            </Sidebar.Item>
-            <Sidebar.Item href="#" icon={HiViewBoards} label="Pro" labelColor="dark">
-              Kanban
-            </Sidebar.Item>
-            <Sidebar.Item href="#" icon={HiInbox} label="3">
-              Inbox
-            </Sidebar.Item>
-            <Sidebar.Item href="#" icon={HiUser}>
-              Users
-            </Sidebar.Item>
-            <Sidebar.Item href="#" icon={HiShoppingBag}>
-              Products
-            </Sidebar.Item>
-            <Sidebar.Item href="#" icon={HiArrowSmRight}>
-              Sign In
-            </Sidebar.Item>
-            <Sidebar.Item href="#" icon={HiTable}>
-              Sign Up
-            </Sidebar.Item>
-          </Sidebar.ItemGroup>
+          { periods.map((p, i) => {
+            return <Sidebar.ItemGroup key={i}>
+              {p.map((pp) => {
+                return <Sidebar.Item active={pathname.replaceAll('down', 'up').includes(pp.link)} key={pp.link} as={Link} href={`/trends/${pp.link}`} color={pp.color}>{pp.name}</Sidebar.Item>
+              })}
+            </Sidebar.ItemGroup>
+          })}
         </Sidebar.Items>
       </Sidebar>
     </aside>
   );
 }
+
+interface Period {
+  name: string;
+  link: string;
+  color: string;
+}
+
+const periods: Period[][] = [
+  [
+    {
+      name: 'Days',
+      link: 'dayspath-low-up',
+      color: 'info',
+    },
+    {
+      name: 'Rate',
+      link: 'days3-rate-up',
+      color: 'info',
+    }
+  ],
+  [
+    {
+      name: '3DaysLow',
+      link: 'days3-low-up',
+      color: 'blue',
+    },
+    {
+      name: '3DaysHigh',
+      link: 'days3-high-up',
+      color: 'blue',
+    },
+  ],
+  [
+    {
+      name: '7DaysLow',
+      link: 'days7-low-up',
+      color: 'success',
+    },
+    {
+      name: '7DaysHigh',
+      link: 'days7-high-up',
+      color: 'success',
+    },
+  ],
+  [
+    {
+      name: '15DaysLow',
+      link: 'days15-low-up',
+      color: 'purple',
+    },
+    {
+      name: '15DaysHigh',
+      link: 'days15-high-up',
+      color: 'purple',
+    },
+  ],
+  [
+    {
+      name: '30DaysLow',
+      link: 'days30-low-up',
+      color: 'warning',
+    },
+    {
+      name: '30DaysHigh',
+      link: 'days30-high-up',
+      color: 'warning',
+    },
+  ],
+]

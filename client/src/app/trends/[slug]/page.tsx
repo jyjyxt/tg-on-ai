@@ -1,13 +1,13 @@
-import { Perpetual } from '@/http/types'
-import { initClient } from '@/http/request'
+import { Perpetual } from '@/apis/types'
+import { initClient } from '@/apis/request'
 import Perp from '@/components/Perpetual'
-import Header from '@/components/Header'
+import DefaultLayout from '@/components/Layout'
 
 const lowUp = (a: Perpetual, b: Perpetual) => b.trend!.up - a.trend!.up
 const lowDown = (a: Perpetual, b: Perpetual) => a.trend!.up - b.trend!.up
 const highUp = (a: Perpetual, b: Perpetual) => b.trend!.down! - a.trend!.down!
-const highDown = (a: Perpetual, b: Perpetual) => a.trend!.down! - b.trend!.down!
-const rateUp = (a: Perpetual, b: Perpetual) => b.last_funding_rate - a.last_funding_rate
+  const highDown = (a: Perpetual, b: Perpetual) => a.trend!.down! - b.trend!.down!
+  const rateUp = (a: Perpetual, b: Perpetual) => b.last_funding_rate - a.last_funding_rate
 const rateDown = (a: Perpetual, b: Perpetual) => a.last_funding_rate - b.last_funding_rate
 
 const Index = async ({ params }: { params: { slug: string } }) => {
@@ -31,14 +31,13 @@ const Index = async ({ params }: { params: { slug: string } }) => {
   const perps = s.filter((p: Perpetual) => p.trend != null).sort(sort)
 
   return (
-    <main className="p-2">
-      <Header slug={params.slug} />
-      <div className="flex flex-wrap gap-2">
+    <DefaultLayout>
+      <main className="flex flex-wrap gap-2">
         {perps && perps.map((p: Perpetual) => {
           return <Perp key={p.symbol} p={p} />
         })}
-      </div>
-    </main>
+      </main>
+    </DefaultLayout>
   );
 }
 

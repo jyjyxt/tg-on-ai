@@ -1,6 +1,6 @@
 import { Card, List } from "flowbite-react";
 import BigNumber from 'bignumber.js'
-import { Perpetual, Trend } from '@/http/types';
+import { Perpetual, Trend } from '@/apis/types';
 import { formatNumber } from '@/utils/number';
 import { formatDateFromNow } from '@/utils/date'
 

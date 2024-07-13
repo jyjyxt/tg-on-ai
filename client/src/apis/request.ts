@@ -8,7 +8,7 @@ interface Resp {
 
 export const initClient = () => {
   const ins = (url: string) => {
-    return fetch(`${base}${url}`, { next: { revalidate: 60 } }).then((res) => res.json()).then((data: Resp) => data.data)
+    return fetch(`${base}${url}`, { cache: 'no-store' }).then((res) => res.json()).then((data: Resp) => data.data)
   }
 
   return {

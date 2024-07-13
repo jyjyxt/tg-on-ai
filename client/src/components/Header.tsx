@@ -1,105 +1,40 @@
 import Link from 'next/link';
+import { usePathname } from "next/navigation";
 import { Button } from "flowbite-react";
 import { LiaArrowCircleDownSolid, LiaArrowCircleUpSolid } from "react-icons/lia";
 import Switcher from '@/components/Switcher'
 
-interface Period {
-  name: string;
-  link: string;
-  color: string;
-}
-
-const periods: Period[][] = [
-  [
-    {
-      name: 'Days',
-      link: 'dayspath-low-up',
-      color: 'info',
-    },
-    {
-      name: 'Rate',
-      link: 'days3-rate-up',
-      color: 'info',
-    }
-  ],
-  [
-    {
-      name: '3DaysLow',
-      link: 'days3-low-up',
-      color: 'blue',
-    },
-    {
-      name: '3DaysHigh',
-      link: 'days3-high-up',
-      color: 'blue',
-    },
-  ],
-  [
-    {
-      name: '7DaysLow',
-      link: 'days7-low-up',
-      color: 'success',
-    },
-    {
-      name: '7DaysHigh',
-      link: 'days7-high-up',
-      color: 'success',
-    },
-  ],
-  [
-    {
-      name: '15DaysLow',
-      link: 'days15-low-up',
-      color: 'purple',
-    },
-    {
-      name: '15DaysHigh',
-      link: 'days15-high-up',
-      color: 'purple',
-    },
-  ],
-  [
-    {
-      name: '30DaysLow',
-      link: 'days30-low-up',
-      color: 'warning',
-    },
-    {
-      name: '30DaysHigh',
-      link: 'days30-high-up',
-      color: 'warning',
-    },
-  ],
-]
-
 interface Props {
   slug: string
+  sidebarOpen: boolean;
+  setSidebarOpen: (arg: boolean) => void;
 }
 
-const Index = ({ slug }: Props) => {
+const Index = ({ slug, sidebarOpen, setSidebarOpen }: Props) => {
+  const pathname = usePathname();
+
   return (
-    <>
-      <div className="flex flex-wrap gap-2 mb-4">
-        { periods.map((p, i) => {
-          return <Button.Group key={i}>
-            {p.map((pp) => {
-              return <Button key={pp.link} as={Link} href={`/trends/${pp.link}`} color={pp.color}>{pp.name}</Button>
-            })}
-          </Button.Group>
-        })}
-      </div>
-      <div className="mb-4">
-        <Button.Group className="mr-4">
-          <Button as={Link} href={`/trends/${slug.replaceAll('down', 'up')}`} color="gray">
-            <LiaArrowCircleUpSolid className="mr-3 h-5 w-5" /> UP
-          </Button>
-          <Button as={Link} href={`/trends/${slug.replaceAll('up', 'down')}`} color="gray">
-            <LiaArrowCircleDownSolid className="mr-3 h-5 w-5" /> Down
-          </Button>
-        </Button.Group>
-        <Switcher />
-      </div>
-    </>
+    <div className="mb-4">
+      <button className="inline-flex items-center p-2 mt-2 ms-3 mr-4 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+        onClick={(e) => {
+          e.stopPropagation();
+          setSidebarOpen(!sidebarOpen);
+        }}
+      >
+        <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="M5 7h14M5 12h14M5 17h10"/>
+        </svg>
+      </button>
+      <Button.Group className="mr-4">
+        <Button as={Link} href={`/trends/${slug.replaceAll('down', 'up')}`} color={`${pathname.includes('up') ? 'success' : 'gray'}`}>
+          <LiaArrowCircleUpSolid className="mr-3 h-5 w-5" /> UP
+        </Button>
+        <Button as={Link} href={`/trends/${slug.replaceAll('up', 'down')}`} color={`${pathname.includes('down') ? 'success' : 'gray'}`}>
+          <LiaArrowCircleDownSolid className="mr-3 h-5 w-5" /> Down
+        </Button>
+      </Button.Group>
+      <Switcher />
+    </div>
   )
 }
 
