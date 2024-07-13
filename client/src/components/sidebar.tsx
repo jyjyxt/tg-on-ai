@@ -11,52 +11,6 @@ interface Props {
   setSidebarOpen: (arg: boolean) => void;
 }
 
-export default function Index({ sidebarOpen, setSidebarOpen }: Props) {
-  const sidebar = useRef<any>(null);
-  const pathname = usePathname();
-
-  // close on click outside
-  useEffect(() => {
-    const clickHandler = ({ target }: MouseEvent) => {
-      if (!sidebar.current) return;
-      if (
-        !sidebarOpen ||
-        sidebar.current.contains(target)
-      )
-        return;
-      setSidebarOpen(false);
-    };
-    document.addEventListener("click", clickHandler);
-    return () => document.removeEventListener("click", clickHandler);
-  });
-
-  // close if the esc key is pressed
-  useEffect(() => {
-    const keyHandler = ({ key }: KeyboardEvent) => {
-      if (!sidebarOpen || key !== "Escape") return;
-      setSidebarOpen(false);
-    };
-    document.addEventListener("keydown", keyHandler);
-    return () => document.removeEventListener("keydown", keyHandler);
-  });
-
-  return (
-    <aside ref={sidebar} className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} sm:translate-x-0`} aria-label="Sidebar">
-      <Sidebar>
-        <Sidebar.Items>
-          { periods.map((p, i) => {
-            return <Sidebar.ItemGroup key={i}>
-              {p.map((pp) => {
-                return <Sidebar.Item active={pathname.replaceAll('down', 'up').includes(pp.link)} key={pp.link} as={Link} href={`/trends/${pp.link}`} color={pp.color}>{pp.name}</Sidebar.Item>
-              })}
-            </Sidebar.ItemGroup>
-          })}
-        </Sidebar.Items>
-      </Sidebar>
-    </aside>
-  );
-}
-
 interface Period {
   name: string;
   link: string;
@@ -125,3 +79,51 @@ const periods: Period[][] = [
     },
   ],
 ]
+
+const Index = ({ sidebarOpen, setSidebarOpen }: Props) => {
+  const sidebar = useRef<any>(null);
+  const pathname = usePathname();
+
+  // close on click outside
+  useEffect(() => {
+    const clickHandler = ({ target }: MouseEvent) => {
+      if (!sidebar.current) return;
+      if (
+        !sidebarOpen ||
+        sidebar.current.contains(target)
+      )
+        return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener("click", clickHandler);
+    return () => document.removeEventListener("click", clickHandler);
+  });
+
+  // close if the esc key is pressed
+  useEffect(() => {
+    const keyHandler = ({ key }: KeyboardEvent) => {
+      if (!sidebarOpen || key !== "Escape") return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener("keydown", keyHandler);
+    return () => document.removeEventListener("keydown", keyHandler);
+  });
+
+  return (
+    <aside ref={sidebar} className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} sm:translate-x-0`} aria-label="Sidebar">
+      <Sidebar>
+        <Sidebar.Items>
+          { periods.map((p, i) => {
+            return <Sidebar.ItemGroup key={i}>
+              {p.map((pp) => {
+                return <Sidebar.Item active={pathname.replaceAll('down', 'up').includes(pp.link)} key={pp.link} as={Link} href={`/trends/${pp.link}`} color={pp.color}>{pp.name}</Sidebar.Item>
+              })}
+            </Sidebar.ItemGroup>
+          })}
+        </Sidebar.Items>
+      </Sidebar>
+    </aside>
+  );
+}
+
+export default Index
