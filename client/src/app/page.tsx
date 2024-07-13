@@ -15,9 +15,10 @@ const Index = async () => {
   return (
     <DefaultLayout>
       <main className="flex flex-wrap gap-2">
-        {perps && perps.map((p: Perpetual) => {
-          return <Perp key={p.symbol} p={p} />
-        })}
+        {perps && perps.map((p: Perpetual, i: number) => {
+          return (
+            <Perp key={p.symbol} p={p} idx={i} />
+          )})}
       </main>
     </DefaultLayout>
   );

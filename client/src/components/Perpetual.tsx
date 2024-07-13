@@ -6,6 +6,7 @@ import { formatDateFromNow } from '@/utils/date'
 
 interface prop {
   p: Perpetual
+  idx: number
 }
 
 const fields: string[][] = [
@@ -14,8 +15,9 @@ const fields: string[][] = [
   ['Low', 'low'],
 ]
 
-const Index = ({ p }: prop) => {
+const Index = ({ p, idx }: prop) => {
   const t = p.trend as Trend
+  console.log(idx)
 
   return (
     <Card className="w-80 flex-grow">
@@ -24,7 +26,7 @@ const Index = ({ p }: prop) => {
           { t.down && <><span className="text-green-600 dark:text-green-300">{t.up}%</span> / <span className="text-red-600 dark:text-red-300">{t.down * -1}%</span></> }
           { !t.down && <span className={t.up > 0 ? 'text-green-600 dark:text-green-300' : 'text-red-600 dark:text-red-300'}>{t.up} Days</span> }
         </h5>
-        <span className="text-sm"> {p.symbol} </span>
+        <span className="text-sm"> {p.symbol} / No. {idx} </span>
       </div>
       <div className="flex-1">
         <div className="flex flex-wrap gap-2">
