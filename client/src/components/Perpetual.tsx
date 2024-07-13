@@ -1,4 +1,4 @@
-import { Card, List } from "flowbite-react";
+import { Card, Badge, List } from "flowbite-react";
 import BigNumber from 'bignumber.js'
 import { Perpetual, Trend } from '@/apis/types';
 import { formatNumber } from '@/utils/number';
@@ -26,33 +26,20 @@ const Index = ({ p }: prop) => {
         </h5>
         <span className="text-sm"> {p.symbol} </span>
       </div>
-      <List unstyled className="w-full">
-        { fields && fields.map((f) => {
-          return (
-            <List.Item key={f[0]} className="sm:py-1 flex">
-              <div className="min-w-0 flex-1"> 
-                <p className="truncate text-sm font-medium text-gray-900 dark:text-white">{f[0]}</p>
-              </div>
-              <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">${t[f[1] as keyof Trend]}</div>
-            </List.Item>
-          )
-        })}
-        <List.Item className="sm:py-1 flex">
-          <div className="min-w-0 flex-1"> 
-            <p className="truncate text-sm font-medium text-gray-900 dark:text-white">Funding Rate</p>
-          </div>
-          <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">{BigNumber(p.last_funding_rate).times(100).toFormat()}%</div>
-        </List.Item>
-        <List.Item className="sm:py-1 flex">
-          <div className="min-w-0 flex-1"> 
-            <p className="truncate text-sm font-medium text-gray-900 dark:text-white">Interest Value</p>
-          </div>
-          <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">${formatNumber(Math.floor(p.sum_open_interest_value))}</div>
-        </List.Item>
-        <List.Item className="sm:py-1 flex text-sm">
-          {formatDateFromNow(new Date(p.updated_at))}
-        </List.Item>
-      </List>
+      <div className="flex-1">
+        <div className="flex flex-wrap gap-2">
+          { fields && fields.map((f) => {
+            return (
+              <Badge key={f[0]} color="info">{f[0]}: ${t[f[1] as keyof Trend]}</Badge>
+            )
+          })}
+          <Badge color="indigo">Funding Rate: {BigNumber(p.last_funding_rate).times(100).toFormat()}%</Badge>
+          <Badge color="purple">Interest Value: {formatNumber(Math.floor(p.sum_open_interest_value))}</Badge>
+        </div>
+      </div>
+      <div className="text-gray-500 dark:text-gray-400 text-sm">
+        {formatDateFromNow(new Date(p.updated_at))}
+      </div>
     </Card>
   )
 }
