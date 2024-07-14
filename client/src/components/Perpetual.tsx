@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 import { Perpetual, Trend } from '@/apis/types';
 import { formatNumber } from '@/utils/number';
 import { formatDateFromNow } from '@/utils/date'
+import { SiBinance } from "react-icons/si";
 
 interface prop {
   p: Perpetual
@@ -39,7 +40,12 @@ const Index = ({ p, idx }: prop) => {
           <Badge color="purple">Interest Value: {formatNumber(Math.floor(p.sum_open_interest_value))}</Badge>
         </div>
       </div>
-      <div className="text-gray-500 dark:text-gray-400 text-sm">
+      <div className="text-gray-500 dark:text-gray-400 text-sm flex items-center">
+        <div className="flex-1">
+          <a href={`https://www.binance.com/futures/${p.symbol}`} target="_blank" rel="noopener noreferrer">
+            <SiBinance fill="#F0B90B" />
+          </a>
+        </div>
         {formatDateFromNow(new Date(p.updated_at))}
       </div>
     </Card>
