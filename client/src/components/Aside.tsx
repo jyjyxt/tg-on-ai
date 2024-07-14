@@ -25,8 +25,13 @@ const periods: Period[][] = [
       color: 'info',
     },
     {
-      name: 'Rate',
+      name: 'Runding Rate',
       link: 'days3-rate-up',
+      color: 'info',
+    },
+    {
+      name: 'Interest Value',
+      link: 'days3-value-up',
       color: 'info',
     }
   ],
