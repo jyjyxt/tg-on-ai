@@ -18,7 +18,6 @@ const fields: string[][] = [
 
 const Index = ({ p, idx }: prop) => {
   const t = p.trend as Trend
-  console.log(idx)
 
   return (
     <Card className="w-80 flex-grow">
@@ -38,6 +37,7 @@ const Index = ({ p, idx }: prop) => {
           })}
           <Badge color="indigo">Funding Rate: {BigNumber(p.last_funding_rate).times(100).toFormat()}%</Badge>
           <Badge color="purple">Interest Value: {formatNumber(Math.floor(p.sum_open_interest_value))}</Badge>
+          {p.categories && <Badge color="pink">{p.categories}</Badge>}
         </div>
       </div>
       <div className="text-gray-500 dark:text-gray-400 text-sm flex items-center">
