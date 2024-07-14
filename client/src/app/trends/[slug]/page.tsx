@@ -41,7 +41,7 @@ const Index = async ({ params }: { params: { slug: string } }) => {
       <main className="flex flex-wrap gap-2">
         {perps && perps.map((p: Perpetual, i: number) => {
           return (
-            <Perp key={p.symbol} p={p} idx={i} />
+            <Perp key={p.symbol} p={p} idx={i} days={params.slug.includes('dayspath')} />
           )})}
       </main>
     </DefaultLayout>

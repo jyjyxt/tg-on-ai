@@ -8,6 +8,7 @@ import { SiBinance } from "react-icons/si";
 interface prop {
   p: Perpetual
   idx: number
+  days?: boolean
 }
 
 const fields: string[][] = [
@@ -16,15 +17,15 @@ const fields: string[][] = [
   ['Low', 'low'],
 ]
 
-const Index = ({ p, idx }: prop) => {
+const Index = ({ p, idx, days }: prop) => {
   const t = p.trend as Trend
 
   return (
     <Card className="w-80 flex-grow">
       <div className="flex items-center justify-between">
         <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-          { t.down && <><span className="text-green-600 dark:text-green-300">{t.up}%</span> / <span className="text-red-600 dark:text-red-300">{t.down * -1}%</span></> }
-          { !t.down && <span className={t.up > 0 ? 'text-green-600 dark:text-green-300' : 'text-red-600 dark:text-red-300'}>{t.up} Days</span> }
+          { !days && <><span className="text-green-600 dark:text-green-300">{t.up}%</span> / <span className="text-red-600 dark:text-red-300">{(t.down || 0) * -1}%</span></> }
+          { days && <span className={t.up > 0 ? 'text-green-600 dark:text-green-300' : 'text-red-600 dark:text-red-300'}>{t.up} Days</span> }
         </h5>
         <span className="text-sm"> {p.symbol} / No. {idx} </span>
       </div>
