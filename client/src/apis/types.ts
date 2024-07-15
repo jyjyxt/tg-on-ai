@@ -19,6 +19,7 @@ export interface Perpetual {
   sum_open_interest_value: number;
 
   updated_at: number;
+  coingecko: string;
 
   trend?: Trend;
 }
