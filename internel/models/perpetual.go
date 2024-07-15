@@ -37,18 +37,20 @@ type Perpetual struct {
 	// FundingRateFloor     string
 	// fundingIntervalHours int64
 
+	CoinGecko string
+
 	Trend *Trend
 }
 
-var perpetualCols = []string{"symbol", "base_asset", "quote_asset", "categories", "source", "mark_price", "last_funding_rate", "open_interest_value", "updated_at"}
+var perpetualCols = []string{"symbol", "base_asset", "quote_asset", "categories", "source", "mark_price", "last_funding_rate", "open_interest_value", "updated_at", "coingecko"}
 
 func (p *Perpetual) values() []any {
-	return []any{p.Symbol, p.BaseAsset, p.QuoteAsset, p.Categories, p.Source, p.MarkPrice, p.LastFundingRate, p.SumOpenInterestValue, p.UpdatedAt}
+	return []any{p.Symbol, p.BaseAsset, p.QuoteAsset, p.Categories, p.Source, p.MarkPrice, p.LastFundingRate, p.SumOpenInterestValue, p.UpdatedAt, p.CoinGecko}
 }
 
 func perpetualFromRow(row session.Row) (*Perpetual, error) {
 	var p Perpetual
-	err := row.Scan(&p.Symbol, &p.BaseAsset, &p.QuoteAsset, &p.Categories, &p.Source, &p.MarkPrice, &p.LastFundingRate, &p.SumOpenInterestValue, &p.UpdatedAt)
+	err := row.Scan(&p.Symbol, &p.BaseAsset, &p.QuoteAsset, &p.Categories, &p.Source, &p.MarkPrice, &p.LastFundingRate, &p.SumOpenInterestValue, &p.UpdatedAt, &p.CoinGecko)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}

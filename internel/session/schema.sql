@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS perpetuals (
   last_funding_rate      REAL NOT NULL,
   open_interest_value    REAL NOT NULL,
   updated_at             INTEGER NOT NULL,
+  coingecko              TEXT NOT NULL,
 
   PRIMARY KEY(symbol)
 );

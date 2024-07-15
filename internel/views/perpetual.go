@@ -13,7 +13,8 @@ type Perpetual struct {
 	LastFundingRate      float64 `json:"last_funding_rate"`
 	SumOpenInterestValue float64 `json:"sum_open_interest_value"`
 
-	UpdatedAt int64 `json:"updated_at"`
+	UpdatedAt int64  `json:"updated_at"`
+	CoinGecko string `json:"coingecko"`
 
 	Trend *Trend `json:"trend"`
 }
@@ -29,6 +30,7 @@ func buildPerpetual(a *models.Perpetual) *Perpetual {
 		LastFundingRate:      a.LastFundingRate,
 		SumOpenInterestValue: a.SumOpenInterestValue,
 		UpdatedAt:            a.UpdatedAt,
+		CoinGecko:            a.CoinGecko,
 	}
 	if a.Trend != nil {
 		b.Trend = buildTrend(a.Trend)
