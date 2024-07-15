@@ -26,10 +26,10 @@ const Index = ({ slug, sidebarOpen, setSidebarOpen }: Props) => {
         </svg>
       </button>
       <Button.Group className="mr-4">
-        <Button as={Link} href={`/trends/${slug.replaceAll('down', 'up')}`} color={`${pathname.includes('up') ? 'success' : 'gray'}`}>
+        <Button size="sm" as={Link} href={`/trends/${slug.replaceAll('down', 'up')}`} color={`${pathname.includes('up') ? 'success' : 'gray'}`}>
           <LiaArrowCircleUpSolid className="mr-3 h-5 w-5" /> UP
         </Button>
-        <Button as={Link} href={`/trends/${slug.replaceAll('up', 'down')}`} color={`${pathname.includes('down') ? 'success' : 'gray'}`}>
+        <Button size="sm" as={Link} href={`/trends/${slug.replaceAll('up', 'down')}`} color={`${pathname.includes('down') ? 'success' : 'gray'}`}>
           <LiaArrowCircleDownSolid className="mr-3 h-5 w-5" /> Down
         </Button>
       </Button.Group>
