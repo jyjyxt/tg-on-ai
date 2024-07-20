@@ -12,11 +12,12 @@ import (
 )
 
 const (
-	TrendDaysPath = "dayspath"
-	TrendDays3    = "days3"
-	TrendDays7    = "days7"
-	TrendDays15   = "days15"
-	TrendDays30   = "days30"
+	TrendDaysPath      = "dayspath"
+	TrendDaysChildPath = "dayschildpath"
+	TrendDays3         = "days3"
+	TrendDays7         = "days7"
+	TrendDays15        = "days15"
+	TrendDays30        = "days30"
 )
 
 type Trend struct {
