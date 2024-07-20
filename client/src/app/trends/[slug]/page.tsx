@@ -21,6 +21,8 @@ const Index = async ({ params }: { params: { slug: string } }) => {
   let sort = lowUp
   if (params.slug.includes('low-down')) {
     sort = lowDown
+  } else if (params.slug.includes('up-down')) {
+    sort = lowDown
   } else if (params.slug.includes('high-up')) {
     sort = highUp
   } else if (params.slug.includes('high-down')) {
@@ -34,7 +36,18 @@ const Index = async ({ params }: { params: { slug: string } }) => {
   } else if (params.slug.includes('value-down')) {
     sort = valueDown
   }
-  const perps = s.filter((p: Perpetual) => p.trend != null).sort(sort)
+  const perps = s.filter((p: Perpetual) => {
+    if (!p.trend) {
+      return
+    }
+    if (params.slug.includes('-up-')) {
+      return p.trend.up > 0
+    }
+    if (params.slug.includes('-down-')) {
+      return p.trend.up < 0
+    }
+    return true
+  }).sort(sort)
 
   return (
     <DefaultLayout>

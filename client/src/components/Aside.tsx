@@ -20,8 +20,23 @@ interface Period {
 const periods: Period[][] = [
   [
     {
-      name: 'Days',
-      link: 'dayspath-low-up',
+      name: 'Days Up',
+      link: 'dayspath-up-up',
+      color: 'info',
+    },
+    {
+      name: 'Days Down',
+      link: 'dayspath-down-up',
+      color: 'info',
+    },
+    {
+      name: 'Days Child Up',
+      link: 'dayschildpath-up-up',
+      color: 'info',
+    },
+    {
+      name: 'Days Child Down',
+      link: 'dayschildpath-down-up',
       color: 'info',
     },
     {
