@@ -60,7 +60,9 @@ func UpsertTrend(ctx context.Context, symbol, category string, h, l, now, up flo
 		Up:        up,
 		UpdatedAt: time.Now(),
 	}
-	if category != TrendDaysPath {
+	switch category {
+	case TrendDaysPath, TrendDaysChildPath:
+	default:
 		t.Up = t.Now/t.Low - 1
 		t.Down = 1 - t.Now/t.High
 	}
