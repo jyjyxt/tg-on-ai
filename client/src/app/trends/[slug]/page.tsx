@@ -21,7 +21,9 @@ const Index = async ({ params }: { params: { slug: string } }) => {
   let sort = lowUp
   if (params.slug.includes('low-down')) {
     sort = lowDown
-  } else if (params.slug.includes('up-down')) {
+  } else if (params.slug.includes('asc-down')) {
+    sort = lowDown
+  } else if (params.slug.includes('desc-down')) {
     sort = lowDown
   } else if (params.slug.includes('high-up')) {
     sort = highUp
@@ -40,10 +42,10 @@ const Index = async ({ params }: { params: { slug: string } }) => {
     if (!p.trend) {
       return
     }
-    if (params.slug.includes('-up-')) {
+    if (params.slug.includes('-asc-')) {
       return p.trend.up > 0
     }
-    if (params.slug.includes('-down-')) {
+    if (params.slug.includes('-desc-')) {
       return p.trend.up < 0
     }
     return true
@@ -54,7 +56,7 @@ const Index = async ({ params }: { params: { slug: string } }) => {
       <main className="flex flex-wrap gap-2">
         {perps && perps.map((p: Perpetual, i: number) => {
           return (
-            <Perp key={p.symbol} p={p} idx={i} days={params.slug.includes('dayspath')} />
+            <Perp key={p.symbol} p={p} idx={i} days={params.slug.includes('dayspath') || params.slug.includes('dayschildpath')} />
           )})}
       </main>
     </DefaultLayout>

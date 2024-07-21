@@ -21,22 +21,22 @@ const periods: Period[][] = [
   [
     {
       name: 'Days Up',
-      link: 'dayspath-up-up',
+      link: 'dayspath-asc-up',
       color: 'info',
     },
     {
       name: 'Days Down',
-      link: 'dayspath-down-up',
+      link: 'dayspath-desc-up',
       color: 'info',
     },
     {
       name: 'Days Child Up',
-      link: 'dayschildpath-up-up',
+      link: 'dayschildpath-asc-up',
       color: 'info',
     },
     {
       name: 'Days Child Down',
-      link: 'dayschildpath-down-up',
+      link: 'dayschildpath-desc-up',
       color: 'info',
     },
     {
