@@ -138,10 +138,12 @@ func findTrends(ctx context.Context, tx *sql.Tx, query string, args ...any) ([]*
 }
 
 func (t *Trend) GetUp() float64 {
-	if t.Category == TrendDaysPath {
+	switch t.Category {
+	case TrendDaysPath, TrendDaysChildPath:
 		return t.Up
+	default:
+		return math.Floor(t.Up*10000) / 100
 	}
-	return math.Floor(t.Up*10000) / 100
 }
 
 func (t *Trend) GetDown() float64 {
