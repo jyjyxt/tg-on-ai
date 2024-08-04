@@ -26,7 +26,7 @@ const periods: Period[][] = [
     },
     {
       name: 'Days Down',
-      link: 'dayspath-desc-up',
+      link: 'dayspath-desc-down',
       color: 'info',
     },
     {
@@ -36,7 +36,7 @@ const periods: Period[][] = [
     },
     {
       name: 'Days Child Down',
-      link: 'dayschildpath-desc-up',
+      link: 'dayschildpath-desc-down',
       color: 'info',
     },
     {
