@@ -62,10 +62,9 @@ func fetchCoinGecko(ctx context.Context, ids []string) error {
 	}
 
 	for _, coin := range coins {
-		symbol := strings.ToUpper(coin.Symbol) + "USDT"
-		err = models.UpdatePerpetualMarketCap(ctx, symbol, coin.MarketCap)
+		err = models.UpdatePerpetualMarketCap(ctx, coin.ID, coin.MarketCap)
 		if err != nil {
-			log.Printf("Failed to update price for %s: %v", symbol, err)
+			log.Printf("Failed to update price for %s: %v", coin.ID, err)
 		}
 	}
 
