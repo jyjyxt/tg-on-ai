@@ -38,6 +38,7 @@ func LoopingCoinGecko(ctx context.Context) {
 				time.Sleep(time.Second)
 				continue
 			}
+			time.Sleep(time.Second * 3)
 		}
 		log.Println("LoopingCoinGecko executed at", time.Now())
 		time.Sleep(time.Minute * 10)
@@ -45,6 +46,7 @@ func LoopingCoinGecko(ctx context.Context) {
 }
 
 func fetchCoinGecko(ctx context.Context, ids []string) error {
+	log.Println("fetchCoinGecko() => ", strings.Join(ids, ","))
 	resp, err := http.Get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=" + strings.Join(ids, ","))
 	if err != nil {
 		return err
