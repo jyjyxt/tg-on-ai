@@ -28,12 +28,20 @@ func main() {
 	ctx := context.Background()
 	ctx = session.WithSqliteDB(ctx, store)
 
-	for i := 6; i < 9; i++ {
+	for i := 4; i < 9; i++ {
 		time.Sleep(time.Second * 3)
 		log.Println(i)
-		r, err := http.Get(fmt.Sprintf("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&page=%d", i))
-		if err != nil {
-			panic(err)
+		var r *http.Response
+		for {
+			r, err = http.Get(fmt.Sprintf("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&page=%d", i))
+			if err != nil {
+				log.Println(err)
+				time.Sleep(time.Second * 3)
+				continue
+			}
+			if r.StatusCode == 200 {
+				break
+			}
 		}
 
 		var body []*Asset
