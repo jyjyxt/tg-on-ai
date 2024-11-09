@@ -28,7 +28,11 @@ func LoopingCoinGecko(ctx context.Context) {
 			continue
 		}
 		for i := 0; i < len(ids); i += 200 {
-			err = fetchCoinGecko(ctx, ids[i:i+200])
+			to := i + 200
+			if to > len(ids) {
+				to = len(ids)
+			}
+			err = fetchCoinGecko(ctx, ids[i:to])
 			if err != nil {
 				log.Printf("fetchCoinGecko() => %#v", err)
 				time.Sleep(time.Second)
