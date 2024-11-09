@@ -38,19 +38,20 @@ type Perpetual struct {
 	// fundingIntervalHours int64
 
 	CoinGecko string
+	MarketCap float64
 
 	Trend *Trend
 }
 
-var perpetualCols = []string{"symbol", "base_asset", "quote_asset", "categories", "source", "mark_price", "last_funding_rate", "open_interest_value", "updated_at", "coingecko"}
+var perpetualCols = []string{"symbol", "base_asset", "quote_asset", "categories", "source", "mark_price", "last_funding_rate", "open_interest_value", "market_cap", "updated_at", "coingecko"}
 
 func (p *Perpetual) values() []any {
-	return []any{p.Symbol, p.BaseAsset, p.QuoteAsset, p.Categories, p.Source, p.MarkPrice, p.LastFundingRate, p.SumOpenInterestValue, p.UpdatedAt, p.CoinGecko}
+	return []any{p.Symbol, p.BaseAsset, p.QuoteAsset, p.Categories, p.Source, p.MarkPrice, p.LastFundingRate, p.SumOpenInterestValue, p.MarketCap, p.UpdatedAt, p.CoinGecko}
 }
 
 func perpetualFromRow(row session.Row) (*Perpetual, error) {
 	var p Perpetual
-	err := row.Scan(&p.Symbol, &p.BaseAsset, &p.QuoteAsset, &p.Categories, &p.Source, &p.MarkPrice, &p.LastFundingRate, &p.SumOpenInterestValue, &p.UpdatedAt, &p.CoinGecko)
+	err := row.Scan(&p.Symbol, &p.BaseAsset, &p.QuoteAsset, &p.Categories, &p.Source, &p.MarkPrice, &p.LastFundingRate, &p.SumOpenInterestValue, &p.MarketCap, &p.UpdatedAt, &p.CoinGecko)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -380,4 +381,41 @@ func PerpetualsForHuman(ctx context.Context, ps []*Perpetual) string {
 		tt = append(tt, fmt.Sprintf("%s\n%s", in, strings.Join(r, ",")))
 	}
 	return strings.Join(tt, "\n")
+}
+
+func SelectAllCoinGeckoIds(ctx context.Context) ([]string, error) {
+	query := "SELECT coingecko FROM perpetuals WHERE coingecko != ''"
+	rows, err := session.SqliteDB(ctx).Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	var ids []string
+	for rows.Next() {
+		var id string
+		err = rows.Scan(&id)
+		if err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	return ids, nil
+}
+
+func UpdatePerpetualMarketCap(ctx context.Context, symbol string, marketCap float64) error {
+	s := session.SqliteDB(ctx)
+	s.Lock()
+	defer s.Unlock()
+
+	txn, err := s.BeginTx(ctx)
+	if err != nil {
+		return err
+	}
+	defer txn.Rollback()
+
+	query := "UPDATE perpetuals SET market_cap=? WHERE coingecko=?"
+	err = s.ExecOne(ctx, txn, query, marketCap, symbol)
+	if err != nil {
+		return err
+	}
+	return txn.Commit()
 }

@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS perpetuals (
   mark_price             REAL NOT NULL,
   last_funding_rate      REAL NOT NULL,
   open_interest_value    REAL NOT NULL,
+  market_cap             REAL NOT NULL,
   updated_at             INTEGER NOT NULL,
   coingecko              TEXT NOT NULL,
 

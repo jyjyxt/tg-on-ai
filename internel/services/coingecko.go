@@ -1,0 +1,69 @@
+package services
+
+import (
+	"context"
+	"encoding/json"
+	"io"
+	"log"
+	"net/http"
+	"strings"
+	"time"
+
+	"tg.ai/internel/models"
+)
+
+type CoinGeckoResponse struct {
+	ID        string  `json:"id"`
+	Symbol    string  `json:"symbol"`
+	MarketCap float64 `json:"market_cap"`
+}
+
+func LoopingCoinGecko(ctx context.Context) {
+	log.Println("LoopingCoinGecko starting")
+	for {
+		ids, err := models.SelectAllCoinGeckoIds(ctx)
+		if err != nil {
+			log.Printf("SelectAllCoinGeckoIds() => %#v", err)
+			time.Sleep(time.Second)
+			continue
+		}
+		for i := 0; i < len(ids); i += 200 {
+			err = fetchCoinGecko(ctx, ids[i:i+200])
+			if err != nil {
+				log.Printf("fetchCoinGecko() => %#v", err)
+				time.Sleep(time.Second)
+				continue
+			}
+		}
+		log.Println("LoopingCoinGecko executed at", time.Now())
+		time.Sleep(time.Minute * 10)
+	}
+}
+
+func fetchCoinGecko(ctx context.Context, ids []string) error {
+	resp, err := http.Get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=" + strings.Join(ids, ","))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	var coins []CoinGeckoResponse
+	if err := json.Unmarshal(body, &coins); err != nil {
+		return err
+	}
+
+	for _, coin := range coins {
+		symbol := strings.ToUpper(coin.Symbol) + "USDT"
+		err = models.UpdatePerpetualMarketCap(ctx, symbol, coin.MarketCap)
+		if err != nil {
+			log.Printf("Failed to update price for %s: %v", symbol, err)
+		}
+	}
+
+	return nil
+}

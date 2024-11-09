@@ -13,8 +13,9 @@ type Perpetual struct {
 	LastFundingRate      float64 `json:"last_funding_rate"`
 	SumOpenInterestValue float64 `json:"sum_open_interest_value"`
 
-	UpdatedAt int64  `json:"updated_at"`
-	CoinGecko string `json:"coingecko"`
+	UpdatedAt int64   `json:"updated_at"`
+	CoinGecko string  `json:"coingecko"`
+	MarketCap float64 `json:"market_cap"`
 
 	Trend *Trend `json:"trend"`
 }
