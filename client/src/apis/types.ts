@@ -20,6 +20,7 @@ export interface Perpetual {
 
   updated_at: number;
   coingecko: string;
+  market_cap: number;
 
   trend?: Trend;
 }

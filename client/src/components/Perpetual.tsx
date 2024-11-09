@@ -38,6 +38,7 @@ const Index = ({ p, idx, days }: prop) => {
           })}
           <Badge color="indigo">Funding Rate: {BigNumber(p.last_funding_rate).times(100).toFormat()}%</Badge>
           <Badge color="purple">Interest Value: {formatNumber(Math.floor(p.sum_open_interest_value))}</Badge>
+          <Badge color="gray">Market Cap: {formatNumber(p.market_cap)}</Badge>
           {p.categories && <Badge color="pink">{p.categories}</Badge>}
         </div>
       </div>
