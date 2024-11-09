@@ -32,6 +32,7 @@ func buildPerpetual(a *models.Perpetual) *Perpetual {
 		SumOpenInterestValue: a.SumOpenInterestValue,
 		UpdatedAt:            a.UpdatedAt,
 		CoinGecko:            a.CoinGecko,
+		MarketCap:            a.MarketCap,
 	}
 	if a.Trend != nil {
 		b.Trend = buildTrend(a.Trend)

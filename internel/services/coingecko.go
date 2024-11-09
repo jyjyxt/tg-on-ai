@@ -45,6 +45,7 @@ func LoopingCoinGecko(ctx context.Context) {
 }
 
 func fetchCoinGecko(ctx context.Context, ids []string) error {
+	log.Printf("fetchCoinGecko() => %#v", ids)
 	resp, err := http.Get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=" + strings.Join(ids, ","))
 	if err != nil {
 		return err
@@ -60,8 +61,10 @@ func fetchCoinGecko(ctx context.Context, ids []string) error {
 	if err := json.Unmarshal(body, &coins); err != nil {
 		return err
 	}
+	log.Printf("fetchCoinGecko() => %#v", coins)
 
 	for _, coin := range coins {
+		log.Printf("fetchCoinGecko() => %#v", coin)
 		err = models.UpdatePerpetualMarketCap(ctx, coin.ID, coin.MarketCap)
 		if err != nil {
 			log.Printf("Failed to update price for %s: %v", coin.ID, err)
